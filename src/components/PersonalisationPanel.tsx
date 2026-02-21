@@ -74,26 +74,26 @@ export default function PersonalisationPanel({
       {!isExpanded && (
         <button
           onClick={() => setIsExpanded(true)}
-          className="w-full bg-gradient-to-r from-grass-50 to-sunset/5 rounded-2xl border border-grass-200 p-4 flex items-center justify-between hover:border-grass transition-all group"
+          className="w-full bg-gradient-to-r from-brand-50 to-lime/5 rounded-2xl border border-brand-200 p-4 flex items-center justify-between hover:border-brand transition-all group"
         >
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-grass/10 flex items-center justify-center">
-              <Sliders className="w-5 h-5 text-grass" />
+            <div className="w-10 h-10 rounded-xl bg-brand/10 flex items-center justify-center">
+              <Sliders className="w-5 h-5 text-brand" />
             </div>
             <div className="text-left">
-              <p className="font-semibold text-charcoal text-sm">
+              <p className="font-semibold text-ink text-sm">
                 {isPersonalised
                   ? `Personalised to your ${formatCurrency(options.customSalary!)} salary`
                   : "Make this about YOU"}
               </p>
-              <p className="text-xs text-charcoal-muted">
+              <p className="text-xs text-ink-muted">
                 {isPersonalised
                   ? "Click to adjust your settings"
                   : "Enter your salary and see YOUR real numbers - not area medians"}
               </p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-grass">
+          <div className="flex items-center gap-2 text-brand">
             {!isPersonalised && (
               <Sparkles className="w-4 h-4 group-hover:animate-pulse" />
             )}
@@ -104,31 +104,31 @@ export default function PersonalisationPanel({
 
       {/* Expanded panel */}
       {isExpanded && (
-        <div className="bg-white rounded-2xl border-2 border-grass/20 p-6 shadow-lg shadow-grass/5">
+        <div className="bg-surface rounded-2xl border-2 border-brand/20 p-6 shadow-lg shadow-brand/5">
           <div className="flex items-center justify-between mb-5">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-5 h-5 text-grass" />
-              <h3 className="font-bold text-charcoal">
+              <Sparkles className="w-5 h-5 text-brand" />
+              <h3 className="font-bold text-ink">
                 Personalise Your Comparison
               </h3>
             </div>
             <button
               onClick={() => setIsExpanded(false)}
-              className="p-1.5 hover:bg-grass-50 rounded-lg transition-colors"
+              className="p-1.5 hover:bg-brand-50 rounded-lg transition-colors"
             >
-              <ChevronUp className="w-5 h-5 text-charcoal-muted" />
+              <ChevronUp className="w-5 h-5 text-ink-muted" />
             </button>
           </div>
 
           <div className="space-y-5">
             {/* Salary input */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-charcoal mb-2">
-                <PoundSterling className="w-4 h-4 text-grass" />
+              <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                <PoundSterling className="w-4 h-4 text-brand" />
                 Your annual salary
               </label>
               <div className="relative">
-                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-charcoal-muted font-medium">
+                <span className="absolute left-4 top-1/2 -translate-y-1/2 text-ink-muted font-medium">
                   £
                 </span>
                 <input
@@ -139,25 +139,25 @@ export default function PersonalisationPanel({
                     handleSalaryChange(e.target.value.replace(/,/g, ""))
                   }
                   placeholder={`Area medians: ${formatCurrency(fromMedianSalary)} / ${formatCurrency(toMedianSalary)}`}
-                  className="w-full pl-8 pr-10 py-3 rounded-xl border-2 border-grass/20 focus:border-grass bg-grass-50/50 search-input text-charcoal placeholder:text-charcoal-muted/40 text-lg font-semibold transition-all"
+                  className="w-full pl-8 pr-10 py-3 rounded-xl border-2 border-brand/20 focus:border-brand bg-brand-50/50 search-input text-ink placeholder:text-ink-muted/40 text-lg font-semibold transition-all"
                 />
                 {salaryInput && (
                   <button
                     onClick={handleClearSalary}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-grass-100 rounded-full"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 p-1 hover:bg-brand-100 rounded-full"
                   >
-                    <X className="w-4 h-4 text-charcoal-muted" />
+                    <X className="w-4 h-4 text-ink-muted" />
                   </button>
                 )}
               </div>
               {isPersonalised && (
-                <p className="text-xs text-grass mt-1.5 flex items-center gap-1">
+                <p className="text-xs text-brand mt-1.5 flex items-center gap-1">
                   <Sparkles className="w-3 h-3" />
                   All numbers below are calculated using YOUR salary
                 </p>
               )}
               {!isPersonalised && (
-                <p className="text-xs text-charcoal-muted mt-1.5">
+                <p className="text-xs text-ink-muted mt-1.5">
                   Leave blank to use area median salaries
                 </p>
               )}
@@ -165,8 +165,8 @@ export default function PersonalisationPanel({
 
             {/* Bed size */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-charcoal mb-2">
-                <BedDouble className="w-4 h-4 text-grass" />
+              <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                <BedDouble className="w-4 h-4 text-brand" />
                 How many bedrooms?
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -176,8 +176,8 @@ export default function PersonalisationPanel({
                     onClick={() => handleBedSize(bed.value)}
                     className={`py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
                       options.bedSize === bed.value
-                        ? "bg-grass text-white shadow-md shadow-grass/25"
-                        : "bg-grass-50 text-charcoal hover:bg-grass-100"
+                        ? "bg-brand text-white shadow-md shadow-brand/25"
+                        : "bg-brand-50 text-ink hover:bg-brand-100"
                     }`}
                   >
                     {bed.label}
@@ -188,8 +188,8 @@ export default function PersonalisationPanel({
 
             {/* Childcare toggle */}
             <div>
-              <label className="flex items-center gap-2 text-sm font-medium text-charcoal mb-2">
-                <Baby className="w-4 h-4 text-grass" />
+              <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                <Baby className="w-4 h-4 text-brand" />
                 Include childcare costs?
               </label>
               <div className="grid grid-cols-2 gap-2">
@@ -197,8 +197,8 @@ export default function PersonalisationPanel({
                   onClick={() => handleChildcare(false)}
                   className={`py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
                     !options.includeChildcare
-                      ? "bg-grass text-white shadow-md shadow-grass/25"
-                      : "bg-grass-50 text-charcoal hover:bg-grass-100"
+                      ? "bg-brand text-white shadow-md shadow-brand/25"
+                      : "bg-brand-50 text-ink hover:bg-brand-100"
                   }`}
                 >
                   No kids (yet)
@@ -207,8 +207,8 @@ export default function PersonalisationPanel({
                   onClick={() => handleChildcare(true)}
                   className={`py-2.5 px-4 rounded-xl text-sm font-medium transition-all ${
                     options.includeChildcare
-                      ? "bg-grass text-white shadow-md shadow-grass/25"
-                      : "bg-grass-50 text-charcoal hover:bg-grass-100"
+                      ? "bg-brand text-white shadow-md shadow-brand/25"
+                      : "bg-brand-50 text-ink hover:bg-brand-100"
                   }`}
                 >
                   Yes, include nursery

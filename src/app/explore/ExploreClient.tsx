@@ -20,7 +20,7 @@ import { Location, Region } from "@/lib/types";
 import { locations } from "@/data/locations";
 import { quickCompare, formatCurrency, formatCurrencyShort } from "@/lib/calculations";
 import LocationSearch from "@/components/LocationSearch";
-import CowMascot from "@/components/CowMascot";
+import BrandMark from "@/components/BrandMark";
 
 type SortField = "annualDiff" | "rent" | "salary" | "housePrice";
 
@@ -124,19 +124,19 @@ export default function ExploreClient() {
     <div className="max-w-6xl mx-auto px-4 py-8">
       {/* Hero */}
       <div className="text-center mb-8">
-        <CowMascot size="md" className="mx-auto mb-4" />
-        <h1 className="text-3xl md:text-4xl font-extrabold text-charcoal mb-2">
+        <BrandMark size="lg" className="mx-auto mb-4" />
+        <h1 className="text-3xl md:text-4xl font-extrabold text-ink mb-2">
           Where&apos;s{" "}
           <span className="gradient-text">your</span> greener pasture?
         </h1>
-        <p className="text-charcoal-muted max-w-xl mx-auto">
+        <p className="text-ink-muted max-w-xl mx-auto">
           Pick where you live now, and we&apos;ll rank every other location by how
           much better (or worse) off you&apos;d be. Instant clarity.
         </p>
       </div>
 
       {/* Selection panel */}
-      <div className="bg-white rounded-2xl border border-grass-100 shadow-lg shadow-grass/5 p-6 mb-8">
+      <div className="bg-surface rounded-2xl border border-brand-100 shadow-lg shadow-brand/5 p-6 mb-8">
         <div className="flex flex-col md:flex-row gap-4 items-end">
           <LocationSearch
             label="I currently live in"
@@ -146,11 +146,11 @@ export default function ExploreClient() {
             accentColor="green"
           />
           <div className="flex-1">
-            <label className="block text-sm font-medium text-charcoal-muted mb-2">
+            <label className="block text-sm font-medium text-ink-muted mb-2">
               My salary (optional)
             </label>
             <div className="relative">
-              <PoundSterling className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-muted" />
+              <PoundSterling className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
               <input
                 type="text"
                 inputMode="numeric"
@@ -165,7 +165,7 @@ export default function ExploreClient() {
                   setCustomSalary(e.target.value.replace(/,/g, ""))
                 }
                 placeholder="Leave blank for area medians"
-                className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-grass/20 focus:border-grass bg-white search-input text-charcoal placeholder:text-charcoal-muted/40 transition-all"
+                className="w-full pl-10 pr-4 py-3 rounded-xl border-2 border-brand/20 focus:border-brand bg-surface search-input text-ink placeholder:text-ink-muted/40 transition-all"
               />
             </div>
           </div>
@@ -177,8 +177,8 @@ export default function ExploreClient() {
         <>
           {/* Stats bar */}
           <div className="flex flex-wrap items-center gap-4 mb-4">
-            <p className="text-sm text-charcoal-muted">
-              <span className="font-semibold text-charcoal">
+            <p className="text-sm text-ink-muted">
+              <span className="font-semibold text-ink">
                 {filtered.length}
               </span>{" "}
               locations compared against {homeLocation.name}
@@ -196,20 +196,20 @@ export default function ExploreClient() {
             <div className="ml-auto flex items-center gap-2">
               {/* Search within results */}
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-charcoal-muted" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-ink-muted" />
                 <input
                   type="text"
                   value={searchFilter}
                   onChange={(e) => setSearchFilter(e.target.value)}
                   placeholder="Filter..."
-                  className="pl-9 pr-3 py-2 rounded-lg border border-grass-100 text-sm w-40 focus:w-56 transition-all search-input"
+                  className="pl-9 pr-3 py-2 rounded-lg border border-brand-100 text-sm w-40 focus:w-56 transition-all search-input"
                 />
                 {searchFilter && (
                   <button
                     onClick={() => setSearchFilter("")}
                     className="absolute right-2 top-1/2 -translate-y-1/2"
                   >
-                    <X className="w-3 h-3 text-charcoal-muted" />
+                    <X className="w-3 h-3 text-ink-muted" />
                   </button>
                 )}
               </div>
@@ -219,14 +219,14 @@ export default function ExploreClient() {
                 onClick={() => setShowFilters(!showFilters)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg border text-sm transition-all ${
                   showFilters || selectedRegions.size > 0
-                    ? "border-grass bg-grass-50 text-grass-dark"
-                    : "border-grass-100 text-charcoal-muted hover:border-grass-200"
+                    ? "border-brand bg-brand-50 text-brand-dark"
+                    : "border-brand-100 text-ink-muted hover:border-brand-200"
                 }`}
               >
                 <SlidersHorizontal className="w-4 h-4" />
                 Filters
                 {selectedRegions.size > 0 && (
-                  <span className="bg-grass text-white text-xs px-1.5 rounded-full">
+                  <span className="bg-brand text-white text-xs px-1.5 rounded-full">
                     {selectedRegions.size}
                   </span>
                 )}
@@ -236,15 +236,15 @@ export default function ExploreClient() {
 
           {/* Region filters */}
           {showFilters && (
-            <div className="bg-white rounded-xl border border-grass-100 p-4 mb-4">
+            <div className="bg-surface rounded-xl border border-brand-100 p-4 mb-4">
               <div className="flex items-center justify-between mb-3">
-                <p className="text-sm font-medium text-charcoal">
+                <p className="text-sm font-medium text-ink">
                   Filter by region
                 </p>
                 {selectedRegions.size > 0 && (
                   <button
                     onClick={() => setSelectedRegions(new Set())}
-                    className="text-xs text-grass hover:underline"
+                    className="text-xs text-brand hover:underline"
                   >
                     Clear all
                   </button>
@@ -257,8 +257,8 @@ export default function ExploreClient() {
                     onClick={() => toggleRegion(region)}
                     className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                       selectedRegions.has(region)
-                        ? "bg-grass text-white"
-                        : "bg-grass-50 text-charcoal-muted hover:bg-grass-100"
+                        ? "bg-brand text-white"
+                        : "bg-brand-50 text-ink-muted hover:bg-brand-100"
                     }`}
                   >
                     {region}
@@ -269,7 +269,7 @@ export default function ExploreClient() {
           )}
 
           {/* Sort tabs */}
-          <div className="flex gap-1 mb-4 bg-grass-50/50 p-1 rounded-xl w-fit">
+          <div className="flex gap-1 mb-4 bg-brand-50/50 p-1 rounded-xl w-fit">
             {([
               { field: "annualDiff" as SortField, label: "Best value", icon: TrendingUp },
               { field: "rent" as SortField, label: "Cheapest rent", icon: Home },
@@ -281,8 +281,8 @@ export default function ExploreClient() {
                 onClick={() => setSortField(field)}
                 className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
                   sortField === field
-                    ? "bg-white text-grass-dark shadow-sm"
-                    : "text-charcoal-muted hover:text-charcoal"
+                    ? "bg-white text-brand-dark shadow-sm"
+                    : "text-ink-muted hover:text-ink"
                 }`}
               >
                 <Icon className="w-3.5 h-3.5" />
@@ -297,13 +297,13 @@ export default function ExploreClient() {
               <Link
                 key={item.location.id}
                 href={`/compare/${homeLocation.id}-vs-${item.location.id}`}
-                className="group flex items-center gap-4 bg-white rounded-xl border border-grass-100 p-4 hover:border-grass-200 hover:shadow-md hover:shadow-grass/5 transition-all"
+                className="group flex items-center gap-4 bg-surface rounded-xl border border-brand-100 p-4 hover:border-brand-200 hover:shadow-md hover:shadow-brand/5 transition-all"
               >
                 {/* Rank */}
                 <div className="w-8 text-center shrink-0">
                   <span
                     className={`text-sm font-bold ${
-                      i < 3 ? "text-grass" : "text-charcoal-muted"
+                      i < 3 ? "text-brand" : "text-ink-muted"
                     }`}
                   >
                     {i + 1}
@@ -313,14 +313,14 @@ export default function ExploreClient() {
                 {/* Location info */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
-                    <p className="font-semibold text-charcoal truncate">
+                    <p className="font-semibold text-ink truncate">
                       {item.location.name}
                     </p>
-                    <span className="text-xs text-charcoal-muted bg-grass-50 px-2 py-0.5 rounded-full shrink-0">
+                    <span className="text-xs text-ink-muted bg-brand-50 px-2 py-0.5 rounded-full shrink-0">
                       {item.location.region}
                     </span>
                   </div>
-                  <div className="flex gap-4 mt-1 text-xs text-charcoal-muted">
+                  <div className="flex gap-4 mt-1 text-xs text-ink-muted">
                     <span>
                       Rent: {formatCurrency(item.location.rentTwoBed)}/mo
                     </span>
@@ -341,7 +341,7 @@ export default function ExploreClient() {
                         ? "text-better"
                         : item.verdict === "not-greener"
                         ? "text-worse"
-                        : "text-charcoal-muted"
+                        : "text-ink-muted"
                     }`}
                   >
                     {item.verdict === "greener" ? (
@@ -353,7 +353,7 @@ export default function ExploreClient() {
                     )}
                     {formatCurrency(Math.abs(item.annualDiff))}/yr
                   </div>
-                  <p className="text-xs text-charcoal-muted">
+                  <p className="text-xs text-ink-muted">
                     {item.verdict === "greener"
                       ? "better off"
                       : item.verdict === "not-greener"
@@ -363,14 +363,14 @@ export default function ExploreClient() {
                 </div>
 
                 {/* Arrow */}
-                <ArrowRight className="w-4 h-4 text-charcoal-muted group-hover:text-grass group-hover:translate-x-1 transition-all shrink-0" />
+                <ArrowRight className="w-4 h-4 text-ink-muted group-hover:text-brand group-hover:translate-x-1 transition-all shrink-0" />
               </Link>
             ))}
           </div>
 
           {filtered.length === 0 && (
             <div className="text-center py-12">
-              <p className="text-charcoal-muted">
+              <p className="text-ink-muted">
                 No locations match your filters. Try broadening your search.
               </p>
             </div>
@@ -379,11 +379,11 @@ export default function ExploreClient() {
       ) : (
         /* Empty state */
         <div className="text-center py-16">
-          <Compass className="w-12 h-12 text-grass-200 mx-auto mb-4" />
-          <p className="text-charcoal-muted text-lg">
+          <Compass className="w-12 h-12 text-brand-200 mx-auto mb-4" />
+          <p className="text-ink-muted text-lg">
             Pick where you live to see the rankings
           </p>
-          <p className="text-charcoal-muted/60 text-sm mt-1">
+          <p className="text-ink-muted/60 text-sm mt-1">
             We&apos;ll compare it against every other location in the UK
           </p>
         </div>

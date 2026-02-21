@@ -40,7 +40,7 @@ export default function ComparisonSearch({
     fromLocation?.id !== currentFrom.id || toLocation?.id !== currentTo.id;
 
   return (
-    <div className="bg-white rounded-2xl border border-grass-100 p-4 mb-8">
+    <div className="bg-surface rounded-2xl border border-brand-100 p-4 mb-8">
       <div className="flex flex-col md:flex-row gap-3 items-end">
         <LocationSearch
           label="From"
@@ -51,10 +51,10 @@ export default function ComparisonSearch({
         />
         <button
           onClick={handleSwap}
-          className="hidden md:flex w-10 h-10 shrink-0 items-center justify-center rounded-full border border-grass-200 hover:bg-grass-50 transition-colors mb-1"
+          className="hidden md:flex w-10 h-10 shrink-0 items-center justify-center rounded-full border border-brand-200 hover:bg-brand-50 transition-colors mb-1"
           aria-label="Swap locations"
         >
-          <ArrowLeftRight className="w-4 h-4 text-grass" />
+          <ArrowLeftRight className="w-4 h-4 text-brand" />
         </button>
         <LocationSearch
           label="To"
@@ -66,7 +66,7 @@ export default function ComparisonSearch({
         {hasChanged && fromLocation && toLocation && (
           <button
             onClick={handleCompare}
-            className="flex items-center gap-2 px-6 py-3 bg-grass text-white rounded-xl hover:bg-grass-dark transition-colors font-medium shrink-0 mb-1"
+            className="flex items-center gap-2 px-6 py-3 bg-brand text-white rounded-xl hover:bg-brand-dark transition-colors font-medium shrink-0 mb-1"
           >
             <Sparkles className="w-4 h-4" />
             Compare

@@ -60,7 +60,7 @@ export default function ShareButton({
     <div className="flex items-center gap-3">
       <button
         onClick={handleCopyLink}
-        className="flex items-center gap-2 px-4 py-2 bg-grass text-white rounded-xl hover:bg-grass-dark transition-colors text-sm font-medium"
+        className="flex items-center gap-2 px-4 py-2 bg-brand text-white rounded-xl hover:bg-brand-dark transition-colors text-sm font-medium"
       >
         {copied ? (
           <>
@@ -76,7 +76,7 @@ export default function ShareButton({
       </button>
       <button
         onClick={handleShareX}
-        className="flex items-center gap-2 px-4 py-2 bg-charcoal text-white rounded-xl hover:bg-charcoal-light transition-colors text-sm font-medium"
+        className="flex items-center gap-2 px-4 py-2 bg-ink text-white rounded-xl hover:bg-ink-light transition-colors text-sm font-medium"
       >
         <Twitter className="w-4 h-4" />
         Share on X
@@ -87,7 +87,7 @@ export default function ShareButton({
             navigator.share({ title: "Moovely Comparison", text: shareText, url: shareUrl });
           }
         }}
-        className="flex items-center gap-2 px-4 py-2 border border-grass-200 text-grass-dark rounded-xl hover:bg-grass-50 transition-colors text-sm font-medium"
+        className="flex items-center gap-2 px-4 py-2 border border-brand-200 text-brand-dark rounded-xl hover:bg-brand-50 transition-colors text-sm font-medium"
       >
         <Share2 className="w-4 h-4" />
         Share

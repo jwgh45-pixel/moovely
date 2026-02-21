@@ -10,10 +10,10 @@ export default function PopularComparisons() {
 
   return (
     <section className="max-w-4xl mx-auto px-4 py-16">
-      <h2 className="text-2xl font-bold text-charcoal mb-2 text-center">
+      <h2 className="text-2xl font-bold text-ink mb-2 text-center">
         Popular Comparisons
       </h2>
-      <p className="text-charcoal-muted text-center mb-8">
+      <p className="text-ink-muted text-center mb-8">
         See how the UK&apos;s most common mooves stack up.
       </p>
 
@@ -30,19 +30,19 @@ export default function PopularComparisons() {
             <Link
               key={`${fromId}-${toId}`}
               href={`/compare/${fromId}-vs-${toId}`}
-              className="group bg-white rounded-2xl p-5 border border-grass-100 hover:border-grass-200 hover:shadow-lg hover:shadow-grass/5 transition-all"
+              className="group bg-surface rounded-2xl p-5 border border-brand-100 hover:border-brand-200 hover:shadow-lg hover:shadow-brand/5 transition-all"
             >
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2 text-sm">
-                  <span className="font-semibold text-charcoal">
+                  <span className="font-semibold text-ink">
                     {fromLoc.name}
                   </span>
-                  <ArrowRight className="w-4 h-4 text-charcoal-muted" />
-                  <span className="font-semibold text-charcoal">
+                  <ArrowRight className="w-4 h-4 text-ink-muted" />
+                  <span className="font-semibold text-ink">
                     {toLoc.name}
                   </span>
                 </div>
-                <ArrowRight className="w-4 h-4 text-charcoal-muted group-hover:text-grass group-hover:translate-x-1 transition-all" />
+                <ArrowRight className="w-4 h-4 text-ink-muted group-hover:text-brand group-hover:translate-x-1 transition-all" />
               </div>
               <div
                 className={`flex items-center gap-1.5 text-sm font-medium ${

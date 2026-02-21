@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, ArrowLeftRight, Sparkles } from "lucide-react";
 import { Location } from "@/lib/types";
 import LocationSearch from "./LocationSearch";
-import CowMascot from "./CowMascot";
+import BrandMark from "./BrandMark";
 
 export default function HeroSection() {
   const [fromLocation, setFromLocation] = useState<Location | null>(null);
@@ -24,32 +24,30 @@ export default function HeroSection() {
     setToLocation(temp);
   };
 
-  const canCompare = fromLocation && toLocation && fromLocation.id !== toLocation.id;
+  const canCompare =
+    fromLocation && toLocation && fromLocation.id !== toLocation.id;
 
   return (
-    <section className="relative overflow-hidden grass-pattern">
-      <div className="max-w-4xl mx-auto px-4 pt-16 pb-20 text-center">
-        {/* Cow and headline */}
-        <div className="mb-8">
-          <CowMascot size="lg" className="mx-auto mb-6 cow-bounce" />
-          <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight mb-4">
-            <span className="gradient-text">Is the grass</span>
-            <br />
-            <span className="text-charcoal">actually greener?</span>
-          </h1>
-          <p className="text-lg md:text-xl text-charcoal-muted max-w-2xl mx-auto leading-relaxed">
-            Compare any two places in the UK and find out what your money is{" "}
-            <span className="font-semibold text-grass-dark">really</span> worth.
-            Not just costs - your actual{" "}
-            <span className="font-semibold text-grass-dark">
-              disposable income
-            </span>{" "}
-            after tax, rent, bills, and the important stuff (like pints).
-          </p>
-        </div>
+    <section className="relative overflow-hidden hero-bg">
+      <div className="max-w-4xl mx-auto px-4 pt-20 pb-24 text-center">
+        {/* Mark */}
+        <BrandMark size="lg" className="mx-auto mb-8" />
 
-        {/* Search inputs */}
-        <div className="bg-white rounded-3xl shadow-xl shadow-grass/10 border border-grass-100 p-6 md:p-8 max-w-3xl mx-auto">
+        {/* Headline */}
+        <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-5 font-[family-name:var(--font-heading)]">
+          Is the grass
+          <br />
+          <span className="gradient-text">actually greener?</span>
+        </h1>
+
+        <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed mb-10">
+          Compare any two places in the UK. See your real disposable income
+          after tax, rent, bills, and the stuff that matters. Government data,
+          not guesswork.
+        </p>
+
+        {/* Search card */}
+        <div className="bg-surface rounded-2xl shadow-xl shadow-brand/5 border border-border p-6 md:p-8 max-w-3xl mx-auto">
           <div className="flex flex-col md:flex-row gap-4 items-end">
             <LocationSearch
               label="I currently live in"
@@ -61,10 +59,10 @@ export default function HeroSection() {
 
             <button
               onClick={handleSwap}
-              className="hidden md:flex w-10 h-10 shrink-0 items-center justify-center rounded-full border border-grass-200 hover:bg-grass-50 transition-colors mb-1"
+              className="hidden md:flex w-10 h-10 shrink-0 items-center justify-center rounded-full border border-border hover:bg-surface-raised transition-colors mb-1"
               aria-label="Swap locations"
             >
-              <ArrowLeftRight className="w-4 h-4 text-grass" />
+              <ArrowLeftRight className="w-4 h-4 text-ink-muted" />
             </button>
 
             <LocationSearch
@@ -72,17 +70,17 @@ export default function HeroSection() {
               placeholder="Where are you considering?"
               value={toLocation}
               onChange={setToLocation}
-              accentColor="amber"
+              accentColor="lime"
             />
           </div>
 
           <button
             onClick={handleCompare}
             disabled={!canCompare}
-            className={`mt-6 w-full flex items-center justify-center gap-2 py-4 rounded-2xl font-semibold text-lg transition-all ${
+            className={`mt-6 w-full flex items-center justify-center gap-2 py-4 rounded-xl font-semibold text-lg transition-all font-[family-name:var(--font-heading)] ${
               canCompare
-                ? "bg-grass text-white hover:bg-grass-dark shadow-lg shadow-grass/25 hover:shadow-grass/40"
-                : "bg-grass-100 text-charcoal-muted cursor-not-allowed"
+                ? "bg-brand text-white hover:bg-brand-dark shadow-lg shadow-brand/20 hover:shadow-brand/30"
+                : "bg-surface-sunken text-ink-faint cursor-not-allowed"
             }`}
           >
             {canCompare ? (
@@ -97,22 +95,22 @@ export default function HeroSection() {
           </button>
         </div>
 
-        {/* Trust indicators */}
-        <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-charcoal-muted">
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-grass" />
-            Government data (ONS, HMRC)
+        {/* Trust row */}
+        <div className="mt-8 flex flex-wrap justify-center gap-x-6 gap-y-2 text-xs text-ink-faint">
+          <span className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-brand" />
+            ONS &amp; HMRC data
           </span>
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-grass" />
-            150+ UK locations
+          <span className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-brand" />
+            150+ locations
           </span>
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-grass" />
+          <span className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-brand" />
             Updated quarterly
           </span>
-          <span className="flex items-center gap-1">
-            <span className="w-1.5 h-1.5 rounded-full bg-grass" />
+          <span className="flex items-center gap-1.5">
+            <span className="w-1 h-1 rounded-full bg-brand" />
             Free forever
           </span>
         </div>

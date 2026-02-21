@@ -10,7 +10,7 @@ interface LocationSearchProps {
   placeholder: string;
   value: Location | null;
   onChange: (location: Location | null) => void;
-  accentColor?: "green" | "amber";
+  accentColor?: "green" | "amber" | "lime";
 }
 
 export default function LocationSearch({
@@ -75,42 +75,40 @@ export default function LocationSearch({
     }
   };
 
-  const borderColor =
-    accentColor === "amber" ? "border-sunset/30" : "border-grass/30";
-  const focusBorder =
-    accentColor === "amber" ? "focus:border-sunset" : "focus:border-grass";
-  const tagBg =
-    accentColor === "amber"
-      ? "bg-sunset/10 text-sunset-dark"
-      : "bg-grass-100 text-grass-dark";
+  const isLime = accentColor === "amber" || accentColor === "lime";
+  const borderColor = isLime ? "border-lime/30" : "border-brand/30";
+  const focusBorder = isLime ? "focus:border-lime" : "focus:border-brand";
+  const tagBg = isLime
+    ? "bg-lime/10 text-lime-dark"
+    : "bg-brand-100 text-brand-dark";
 
   return (
     <div className="relative flex-1">
-      <label className="block text-sm font-medium text-charcoal-muted mb-2">
+      <label className="block text-sm font-medium text-ink-muted mb-2">
         {label}
       </label>
       {value ? (
         <div
-          className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 ${borderColor} bg-white`}
+          className={`flex items-center gap-2 px-4 py-3 rounded-xl border-2 ${borderColor} bg-surface`}
         >
-          <MapPin className="w-5 h-5 text-grass" />
+          <MapPin className="w-5 h-5 text-brand" />
           <div className="flex-1">
-            <span className="font-semibold text-charcoal">{value.name}</span>
+            <span className="font-semibold text-ink">{value.name}</span>
             <span className={`ml-2 text-xs px-2 py-0.5 rounded-full ${tagBg}`}>
               {value.region}
             </span>
           </div>
           <button
             onClick={() => onChange(null)}
-            className="p-1 hover:bg-grass-50 rounded-full transition-colors"
+            className="p-1 hover:bg-brand-50 rounded-full transition-colors"
             aria-label="Clear selection"
           >
-            <X className="w-4 h-4 text-charcoal-muted" />
+            <X className="w-4 h-4 text-ink-muted" />
           </button>
         </div>
       ) : (
         <div className="relative">
-          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-charcoal-muted" />
+          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-ink-muted" />
           <input
             ref={inputRef}
             type="text"
@@ -119,27 +117,27 @@ export default function LocationSearch({
             onFocus={() => query.length >= 1 && setIsOpen(results.length > 0)}
             onKeyDown={handleKeyDown}
             placeholder={placeholder}
-            className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 ${borderColor} ${focusBorder} bg-white search-input text-charcoal placeholder:text-charcoal-muted/50 transition-all`}
+            className={`w-full pl-12 pr-4 py-3 rounded-xl border-2 ${borderColor} ${focusBorder} bg-surface search-input text-ink placeholder:text-ink-muted/50 transition-all`}
           />
           {isOpen && (
             <div
               ref={dropdownRef}
-              className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-grass-100 shadow-lg shadow-grass/5 overflow-hidden z-50"
+              className="absolute top-full left-0 right-0 mt-2 bg-surface rounded-xl border border-brand-100 shadow-lg shadow-brand/5 overflow-hidden z-50"
             >
               {results.map((location, i) => (
                 <button
                   key={location.id}
                   onClick={() => handleSelect(location)}
-                  className={`w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-grass-50 transition-colors ${
-                    i === highlightIndex ? "bg-grass-50" : ""
-                  } ${i !== results.length - 1 ? "border-b border-grass-50" : ""}`}
+                  className={`w-full px-4 py-3 flex items-center gap-3 text-left hover:bg-brand-50 transition-colors ${
+                    i === highlightIndex ? "bg-brand-50" : ""
+                  } ${i !== results.length - 1 ? "border-b border-brand-50" : ""}`}
                 >
-                  <MapPin className="w-4 h-4 text-grass shrink-0" />
+                  <MapPin className="w-4 h-4 text-brand shrink-0" />
                   <div>
-                    <span className="font-medium text-charcoal">
+                    <span className="font-medium text-ink">
                       {location.name}
                     </span>
-                    <span className="text-xs text-charcoal-muted ml-2">
+                    <span className="text-xs text-ink-muted ml-2">
                       {location.region}
                       {location.county ? `, ${location.county}` : ""}
                     </span>

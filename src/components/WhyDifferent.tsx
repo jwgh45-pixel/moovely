@@ -30,10 +30,10 @@ export default function WhyDifferent() {
 
   return (
     <section id="about" className="max-w-4xl mx-auto px-4 py-16">
-      <h2 className="text-2xl font-bold text-charcoal mb-2 text-center">
+      <h2 className="text-2xl font-bold text-ink mb-2 text-center">
         Why Moovely Is Different
       </h2>
-      <p className="text-charcoal-muted text-center mb-10">
+      <p className="text-ink-muted text-center mb-10">
         We built the tool we wished existed when we were deciding where to live.
       </p>
 
@@ -41,16 +41,16 @@ export default function WhyDifferent() {
         {points.map((point, i) => (
           <div
             key={i}
-            className="flex gap-4 p-5 rounded-2xl bg-white border border-grass-100"
+            className="flex gap-4 p-5 rounded-2xl bg-surface border border-brand-100"
           >
-            <div className="w-10 h-10 rounded-xl bg-grass-50 text-grass flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-brand-50 text-brand flex items-center justify-center shrink-0">
               {point.icon}
             </div>
             <div>
-              <h3 className="font-semibold text-charcoal mb-1">
+              <h3 className="font-semibold text-ink mb-1">
                 {point.title}
               </h3>
-              <p className="text-sm text-charcoal-muted leading-relaxed">
+              <p className="text-sm text-ink-muted leading-relaxed">
                 {point.description}
               </p>
             </div>

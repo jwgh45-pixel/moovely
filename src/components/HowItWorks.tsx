@@ -23,26 +23,26 @@ export default function HowItWorks() {
   ];
 
   return (
-    <section id="how-it-works" className="bg-grass-50/50 py-16">
+    <section id="how-it-works" className="bg-brand-50/50 py-16">
       <div className="max-w-4xl mx-auto px-4">
-        <h2 className="text-2xl font-bold text-charcoal mb-2 text-center">
+        <h2 className="text-2xl font-bold text-ink mb-2 text-center">
           How It Works
         </h2>
-        <p className="text-charcoal-muted text-center mb-10">
+        <p className="text-ink-muted text-center mb-10">
           Three steps. Thirty seconds. A decision that could change your life.
         </p>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
           {steps.map((step, i) => (
             <div key={i} className="text-center">
-              <div className="w-14 h-14 rounded-2xl bg-grass/10 text-grass flex items-center justify-center mx-auto mb-4">
+              <div className="w-14 h-14 rounded-2xl bg-brand/10 text-brand flex items-center justify-center mx-auto mb-4">
                 {step.icon}
               </div>
-              <div className="w-8 h-8 rounded-full bg-grass text-white font-bold text-sm flex items-center justify-center mx-auto mb-3">
+              <div className="w-8 h-8 rounded-full bg-brand text-white font-bold text-sm flex items-center justify-center mx-auto mb-3">
                 {i + 1}
               </div>
-              <h3 className="font-semibold text-charcoal mb-2">{step.title}</h3>
-              <p className="text-sm text-charcoal-muted leading-relaxed">
+              <h3 className="font-semibold text-ink mb-2">{step.title}</h3>
+              <p className="text-sm text-ink-muted leading-relaxed">
                 {step.description}
               </p>
             </div>

@@ -21,17 +21,17 @@ export async function GET(request: NextRequest) {
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#f0fdf4",
+            backgroundColor: "#eefbf3",
             fontFamily: "system-ui, sans-serif",
           }}
         >
-          <div style={{ fontSize: 60, fontWeight: 800, color: "#14532d" }}>
+          <div style={{ fontSize: 60, fontWeight: 800, color: "#04291a" }}>
             moovely
           </div>
           <div
             style={{
               fontSize: 24,
-              color: "#6b7c6b",
+              color: "#6b7b6b",
               letterSpacing: "0.15em",
               textTransform: "uppercase",
             }}
@@ -57,9 +57,9 @@ export async function GET(request: NextRequest) {
             display: "flex",
             alignItems: "center",
             justifyContent: "center",
-            backgroundColor: "#f0fdf4",
+            backgroundColor: "#eefbf3",
             fontSize: 40,
-            color: "#14532d",
+            color: "#04291a",
             fontFamily: "system-ui, sans-serif",
           }}
         >
@@ -85,7 +85,7 @@ export async function GET(request: NextRequest) {
           flexDirection: "column",
           fontFamily: "system-ui, sans-serif",
           backgroundColor: isGreener
-            ? "#f0fdf4"
+            ? "#eefbf3"
             : isWorse
             ? "#fef2f2"
             : "#f9fafb",
@@ -106,7 +106,7 @@ export async function GET(request: NextRequest) {
               style={{
                 fontSize: 36,
                 fontWeight: 800,
-                color: "#14532d",
+                color: "#04291a",
               }}
             >
               moovely
@@ -114,7 +114,7 @@ export async function GET(request: NextRequest) {
             <div
               style={{
                 fontSize: 14,
-                color: "#6b7c6b",
+                color: "#6b7b6b",
                 letterSpacing: "0.12em",
                 textTransform: "uppercase",
               }}
@@ -125,7 +125,7 @@ export async function GET(request: NextRequest) {
           <div
             style={{
               fontSize: 16,
-              color: "#6b7c6b",
+              color: "#6b7b6b",
             }}
           >
             moovely.co
@@ -141,11 +141,11 @@ export async function GET(request: NextRequest) {
             marginBottom: "32px",
           }}
         >
-          <div style={{ fontSize: 42, fontWeight: 700, color: "#1a2e1a" }}>
+          <div style={{ fontSize: 42, fontWeight: 700, color: "#0f1a0f" }}>
             {from.name}
           </div>
-          <div style={{ fontSize: 32, color: "#6b7c6b" }}>vs</div>
-          <div style={{ fontSize: 42, fontWeight: 700, color: "#1a2e1a" }}>
+          <div style={{ fontSize: 32, color: "#6b7b6b" }}>vs</div>
+          <div style={{ fontSize: 42, fontWeight: 700, color: "#0f1a0f" }}>
             {to.name}
           </div>
         </div>
@@ -164,10 +164,10 @@ export async function GET(request: NextRequest) {
               fontSize: 72,
               fontWeight: 800,
               color: isGreener
-                ? "#16a34a"
+                ? "#0d6e3f"
                 : isWorse
                 ? "#dc2626"
-                : "#374937",
+                : "#3d4a3d",
               lineHeight: 1.1,
             }}
           >
@@ -180,7 +180,7 @@ export async function GET(request: NextRequest) {
           <div
             style={{
               fontSize: 24,
-              color: "#6b7c6b",
+              color: "#6b7b6b",
               marginTop: "16px",
             }}
           >
@@ -199,7 +199,7 @@ export async function GET(request: NextRequest) {
             gap: "40px",
             borderTop: "2px solid",
             borderColor: isGreener
-              ? "#bbf7d0"
+              ? "#afebc8"
               : isWorse
               ? "#fecaca"
               : "#e5e7eb",
@@ -207,26 +207,26 @@ export async function GET(request: NextRequest) {
           }}
         >
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 14, color: "#6b7c6b" }}>Median salary</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#1a2e1a" }}>
+            <div style={{ fontSize: 14, color: "#6b7b6b" }}>Median salary</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#0f1a0f" }}>
               {formatCurrency(to.medianSalary)}
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 14, color: "#6b7c6b" }}>2-bed rent</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#1a2e1a" }}>
+            <div style={{ fontSize: 14, color: "#6b7b6b" }}>2-bed rent</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#0f1a0f" }}>
               {formatCurrency(to.rentTwoBed)}/mo
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 14, color: "#6b7c6b" }}>Avg house price</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#1a2e1a" }}>
+            <div style={{ fontSize: 14, color: "#6b7b6b" }}>Avg house price</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#0f1a0f" }}>
               {formatCurrency(to.avgHousePrice)}
             </div>
           </div>
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ fontSize: 14, color: "#6b7c6b" }}>Pint of beer</div>
-            <div style={{ fontSize: 20, fontWeight: 700, color: "#1a2e1a" }}>
+            <div style={{ fontSize: 14, color: "#6b7b6b" }}>Pint of beer</div>
+            <div style={{ fontSize: 20, fontWeight: 700, color: "#0f1a0f" }}>
               £{to.pintOfBeer.toFixed(2)}
             </div>
           </div>

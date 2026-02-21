@@ -3,7 +3,7 @@
 import { ComparisonResult } from "@/lib/types";
 import { formatCurrency } from "@/lib/calculations";
 import MetricCard from "./MetricCard";
-import CowMascot from "./CowMascot";
+import BrandMark from "./BrandMark";
 import ShareButton from "./ShareButton";
 import {
   Banknote,
@@ -71,8 +71,8 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       subtext: isPersonalised
         ? "Based on YOUR salary. This one's about lifestyle, not pounds."
         : "The money's about the same - so this one's about lifestyle, not pounds.",
-      color: "text-charcoal",
-      bg: "bg-grass-50 border-grass/20",
+      color: "text-ink",
+      bg: "bg-brand-50 border-brand/20",
     };
   })();
 
@@ -80,7 +80,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
     <div className="max-w-4xl mx-auto">
       {/* Personalised badge */}
       {isPersonalised && (
-        <div className="flex items-center gap-2 mb-4 text-sm text-grass bg-grass-50 px-4 py-2 rounded-xl w-fit">
+        <div className="flex items-center gap-2 mb-4 text-sm text-brand bg-brand-50 px-4 py-2 rounded-xl w-fit">
           <Sparkles className="w-4 h-4" />
           Personalised to your {formatCurrency(result.salaryFrom)} salary
         </div>
@@ -90,23 +90,23 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       <div
         className={`rounded-3xl border-2 ${headline.bg} p-8 mb-8 text-center`}
       >
-        <CowMascot
+        <BrandMark
           verdict={verdict}
-          size="lg"
-          className="mx-auto mb-4 cow-bounce"
+          size="xl"
+          className="mx-auto mb-4"
         />
         <h2
-          className={`text-2xl md:text-3xl font-bold ${headline.color} headline-number mb-2`}
+          className={`text-2xl md:text-3xl font-bold ${headline.color} mb-2`}
         >
           {headline.text}
         </h2>
-        <p className="text-charcoal-muted text-sm">{headline.subtext}</p>
+        <p className="text-ink-muted text-sm">{headline.subtext}</p>
 
         {/* 5-year compounding callout */}
         {Math.abs(totalAnnualDiff) > 200 && (
           <div className="mt-4 inline-flex items-center gap-2 bg-white/80 px-4 py-2 rounded-xl text-sm">
-            <Calendar className="w-4 h-4 text-charcoal-muted" />
-            <span className="text-charcoal-muted">
+            <Calendar className="w-4 h-4 text-ink-muted" />
+            <span className="text-ink-muted">
               Over 5 years, that&apos;s{" "}
               <span
                 className={`font-bold ${
@@ -131,12 +131,12 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       </div>
 
       {/* Tax breakdown - show people exactly where their money goes */}
-      <div className="bg-white rounded-2xl p-6 border border-grass-100 mb-8">
-        <h3 className="font-bold text-charcoal mb-1 flex items-center gap-2">
-          <Receipt className="w-5 h-5 text-grass" />
+      <div className="bg-surface rounded-2xl p-6 border border-brand-100 mb-8">
+        <h3 className="font-bold text-ink mb-1 flex items-center gap-2">
+          <Receipt className="w-5 h-5 text-brand" />
           Your Take-Home Pay
         </h3>
-        <p className="text-xs text-charcoal-muted mb-4">
+        <p className="text-xs text-ink-muted mb-4">
           {isPersonalised
             ? "Based on your salary - showing what you'd actually receive in each location."
             : "Based on area median salaries. Personalise above to see your own numbers."}
@@ -146,8 +146,8 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
             { loc: from, tax: result.takeHomeFrom, salary: result.salaryFrom },
             { loc: to, tax: result.takeHomeTo, salary: result.salaryTo },
           ].map(({ loc, tax, salary }) => (
-            <div key={loc.id} className="bg-grass-50/50 rounded-xl p-4">
-              <p className="font-semibold text-charcoal text-sm mb-3">
+            <div key={loc.id} className="bg-brand-50/50 rounded-xl p-4">
+              <p className="font-semibold text-ink text-sm mb-3">
                 {loc.name}
                 {loc.country === "Scotland" && (
                   <span className="ml-2 text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
@@ -157,8 +157,8 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
               </p>
               <div className="space-y-1.5 text-sm">
                 <div className="flex justify-between">
-                  <span className="text-charcoal-muted">Gross salary</span>
-                  <span className="font-medium text-charcoal">
+                  <span className="text-ink-muted">Gross salary</span>
+                  <span className="font-medium text-ink">
                     {formatCurrency(salary)}
                   </span>
                 </div>
@@ -170,13 +170,13 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
                   <span>National Insurance</span>
                   <span>-{formatCurrency(tax.nationalInsurance)}</span>
                 </div>
-                <div className="border-t border-grass-200 pt-1.5 flex justify-between">
-                  <span className="font-semibold text-charcoal">Take-home</span>
-                  <span className="font-bold text-charcoal">
+                <div className="border-t border-brand-200 pt-1.5 flex justify-between">
+                  <span className="font-semibold text-ink">Take-home</span>
+                  <span className="font-bold text-ink">
                     {formatCurrency(tax.takeHome)}
                   </span>
                 </div>
-                <div className="flex justify-between text-xs text-charcoal-muted">
+                <div className="flex justify-between text-xs text-ink-muted">
                   <span>
                     Effective tax rate: {tax.effectiveRate}%
                   </span>
@@ -189,7 +189,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         {result.takeHomeDiff !== 0 && (
           <p
             className={`mt-3 text-sm text-center ${
-              result.takeHomeDiff > 0 ? "text-better" : result.takeHomeDiff < 0 ? "text-worse" : "text-charcoal-muted"
+              result.takeHomeDiff > 0 ? "text-better" : result.takeHomeDiff < 0 ? "text-worse" : "text-ink-muted"
             }`}
           >
             {result.takeHomeDiff > 0
@@ -206,11 +206,11 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
 
       {/* Real wages breakdown */}
       <div className="mb-6">
-        <h3 className="text-lg font-bold text-charcoal mb-1 flex items-center gap-2">
-          <PiggyBank className="w-5 h-5 text-grass" />
+        <h3 className="text-lg font-bold text-ink mb-1 flex items-center gap-2">
+          <PiggyBank className="w-5 h-5 text-brand" />
           The Real Wages Breakdown
         </h3>
-        <p className="text-sm text-charcoal-muted mb-4">
+        <p className="text-sm text-ink-muted mb-4">
           What you have left after all the essentials. This is the number that
           matters.
         </p>
@@ -218,26 +218,26 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
 
       {/* Disposable income comparison */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div className="bg-white rounded-2xl p-6 border border-grass-100">
-          <p className="text-sm text-charcoal-muted mb-1">{from.name}</p>
-          <p className="text-xs text-charcoal-muted mb-3">
+        <div className="bg-surface rounded-2xl p-6 border border-brand-100">
+          <p className="text-sm text-ink-muted mb-1">{from.name}</p>
+          <p className="text-xs text-ink-muted mb-3">
             Monthly after essentials
           </p>
-          <p className="text-3xl font-bold text-charcoal">
+          <p className="text-3xl font-bold text-ink">
             {formatCurrency(result.monthlyDisposableFrom)}
-            <span className="text-base font-normal text-charcoal-muted">
+            <span className="text-base font-normal text-ink-muted">
               /mo
             </span>
           </p>
         </div>
-        <div className="bg-white rounded-2xl p-6 border border-grass-100">
-          <p className="text-sm text-charcoal-muted mb-1">{to.name}</p>
-          <p className="text-xs text-charcoal-muted mb-3">
+        <div className="bg-surface rounded-2xl p-6 border border-brand-100">
+          <p className="text-sm text-ink-muted mb-1">{to.name}</p>
+          <p className="text-xs text-ink-muted mb-3">
             Monthly after essentials
           </p>
-          <p className="text-3xl font-bold text-charcoal">
+          <p className="text-3xl font-bold text-ink">
             {formatCurrency(result.monthlyDisposableTo)}
-            <span className="text-base font-normal text-charcoal-muted">
+            <span className="text-base font-normal text-ink-muted">
               /mo
             </span>
           </p>
@@ -345,25 +345,25 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       </div>
 
       {/* House prices */}
-      <div className="mt-8 bg-white rounded-2xl p-6 border border-grass-100">
-        <h3 className="font-semibold text-charcoal mb-4 flex items-center gap-2">
-          <Home className="w-5 h-5 text-grass" />
+      <div className="mt-8 bg-surface rounded-2xl p-6 border border-brand-100">
+        <h3 className="font-semibold text-ink mb-4 flex items-center gap-2">
+          <Home className="w-5 h-5 text-brand" />
           If You&apos;re Buying
         </h3>
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <p className="text-sm text-charcoal-muted mb-1">{from.name}</p>
-            <p className="text-2xl font-bold text-charcoal">
+            <p className="text-sm text-ink-muted mb-1">{from.name}</p>
+            <p className="text-2xl font-bold text-ink">
               {formatCurrency(from.avgHousePrice)}
             </p>
-            <p className="text-xs text-charcoal-muted">Average house price</p>
+            <p className="text-xs text-ink-muted">Average house price</p>
           </div>
           <div>
-            <p className="text-sm text-charcoal-muted mb-1">{to.name}</p>
-            <p className="text-2xl font-bold text-charcoal">
+            <p className="text-sm text-ink-muted mb-1">{to.name}</p>
+            <p className="text-2xl font-bold text-ink">
               {formatCurrency(to.avgHousePrice)}
             </p>
-            <p className="text-xs text-charcoal-muted">Average house price</p>
+            <p className="text-xs text-ink-muted">Average house price</p>
           </div>
         </div>
         {to.avgHousePrice !== from.avgHousePrice && (
@@ -382,25 +382,25 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
 
         {/* Affordability ratio - deeply useful context */}
         <div className="mt-4 grid grid-cols-2 gap-4">
-          <div className="bg-grass-50/50 rounded-xl p-3">
-            <p className="text-xs text-charcoal-muted mb-1">
+          <div className="bg-brand-50/50 rounded-xl p-3">
+            <p className="text-xs text-ink-muted mb-1">
               Price-to-income ratio
             </p>
-            <p className="text-lg font-bold text-charcoal">
+            <p className="text-lg font-bold text-ink">
               {(from.avgHousePrice / result.salaryFrom).toFixed(1)}x
             </p>
-            <p className="text-xs text-charcoal-muted">
+            <p className="text-xs text-ink-muted">
               {from.name} ({isPersonalised ? "your salary" : "median"})
             </p>
           </div>
-          <div className="bg-grass-50/50 rounded-xl p-3">
-            <p className="text-xs text-charcoal-muted mb-1">
+          <div className="bg-brand-50/50 rounded-xl p-3">
+            <p className="text-xs text-ink-muted mb-1">
               Price-to-income ratio
             </p>
-            <p className="text-lg font-bold text-charcoal">
+            <p className="text-lg font-bold text-ink">
               {(to.avgHousePrice / result.salaryTo).toFixed(1)}x
             </p>
-            <p className="text-xs text-charcoal-muted">
+            <p className="text-xs text-ink-muted">
               {to.name} ({isPersonalised ? "your salary" : "median"})
             </p>
           </div>
@@ -408,35 +408,35 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       </div>
 
       {/* Pint index */}
-      <div className="mt-6 bg-gradient-to-r from-sunset/5 to-grass-50 rounded-2xl p-6 border border-sunset/10">
-        <h3 className="font-semibold text-charcoal mb-2 flex items-center gap-2">
-          <Beer className="w-5 h-5 text-sunset" />
+      <div className="mt-6 bg-gradient-to-r from-lime/5 to-brand-50 rounded-2xl p-6 border border-lime/10">
+        <h3 className="font-semibold text-ink mb-2 flex items-center gap-2">
+          <Beer className="w-5 h-5 text-lime" />
           The Pint Index
         </h3>
-        <p className="text-sm text-charcoal-muted mb-3">
+        <p className="text-sm text-ink-muted mb-3">
           Because sometimes this is the only metric that really matters.
         </p>
         <div className="flex flex-wrap items-center gap-8">
           <div>
-            <p className="text-xs text-charcoal-muted">{from.name}</p>
-            <p className="text-xl font-bold text-charcoal">
+            <p className="text-xs text-ink-muted">{from.name}</p>
+            <p className="text-xl font-bold text-ink">
               £{from.pintOfBeer.toFixed(2)}
             </p>
           </div>
-          <div className="text-2xl text-charcoal-muted">→</div>
+          <div className="text-2xl text-ink-muted">→</div>
           <div>
-            <p className="text-xs text-charcoal-muted">{to.name}</p>
-            <p className="text-xl font-bold text-charcoal">
+            <p className="text-xs text-ink-muted">{to.name}</p>
+            <p className="text-xl font-bold text-ink">
               £{to.pintOfBeer.toFixed(2)}
             </p>
           </div>
           <div className="ml-auto text-right">
-            <p className="text-xs text-charcoal-muted">
+            <p className="text-xs text-ink-muted">
               Annual savings (2 pints/week)
             </p>
             <p
               className={`text-lg font-bold ${
-                from.pintOfBeer > to.pintOfBeer ? "text-better" : from.pintOfBeer < to.pintOfBeer ? "text-worse" : "text-charcoal-muted"
+                from.pintOfBeer > to.pintOfBeer ? "text-better" : from.pintOfBeer < to.pintOfBeer ? "text-worse" : "text-ink-muted"
               }`}
             >
               {formatCurrency(
@@ -449,7 +449,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       </div>
 
       {/* Data disclaimer */}
-      <p className="text-xs text-charcoal-muted text-center mt-8 max-w-2xl mx-auto">
+      <p className="text-xs text-ink-muted text-center mt-8 max-w-2xl mx-auto">
         Data sourced from ONS, HMRC, and local authorities.{" "}
         {isPersonalised
           ? "Costs are location-specific; your salary is applied to both locations."
@@ -458,7 +458,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         and typical usage.{" "}
         {result.includesChildcare && "Includes full-time nursery costs. "}
         Always do your own sums before making big decisions.{" "}
-        <span className="text-grass">
+        <span className="text-brand">
           But at least now you know where to start.
         </span>
       </p>

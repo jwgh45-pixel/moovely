@@ -42,24 +42,24 @@ export default function MetricCard({
 
   return (
     <div
-      className="metric-card bg-white rounded-2xl p-5 border border-grass-100 animate-fade-in-up"
+      className="metric-card bg-surface rounded-2xl p-5 border border-brand-100 animate-fade-in-up"
       style={{ animationDelay: `${delay}ms` }}
     >
       <div className="flex items-center gap-3 mb-4">
-        <div className="w-10 h-10 rounded-xl bg-grass-50 flex items-center justify-center text-grass">
+        <div className="w-10 h-10 rounded-xl bg-brand-50 flex items-center justify-center text-brand">
           {icon}
         </div>
-        <h3 className="font-semibold text-charcoal text-sm">{label}</h3>
+        <h3 className="font-semibold text-ink text-sm">{label}</h3>
       </div>
 
       <div className="grid grid-cols-2 gap-3 mb-3">
         <div>
-          <p className="text-xs text-charcoal-muted mb-1 truncate">{fromName}</p>
-          <p className="font-semibold text-charcoal">{formatValue(fromValue)}</p>
+          <p className="text-xs text-ink-muted mb-1 truncate">{fromName}</p>
+          <p className="font-semibold text-ink">{formatValue(fromValue)}</p>
         </div>
         <div>
-          <p className="text-xs text-charcoal-muted mb-1 truncate">{toName}</p>
-          <p className="font-semibold text-charcoal">{formatValue(toValue)}</p>
+          <p className="text-xs text-ink-muted mb-1 truncate">{toName}</p>
+          <p className="font-semibold text-ink">{formatValue(toValue)}</p>
         </div>
       </div>
 

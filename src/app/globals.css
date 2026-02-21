@@ -1,129 +1,96 @@
 @import "tailwindcss";
 
 @theme inline {
-  --color-background: #fafdf7;
-  --color-foreground: #1a2e1a;
+  --color-background: #fafafa;
+  --color-foreground: #0f1a0f;
 
-  /* Brand greens */
-  --color-grass: #16a34a;
-  --color-grass-light: #22c55e;
-  --color-grass-dark: #15803d;
-  --color-grass-50: #f0fdf4;
-  --color-grass-100: #dcfce7;
-  --color-grass-200: #bbf7d0;
-  --color-grass-800: #166534;
-  --color-grass-900: #14532d;
+  /* Brand green - deep, confident, ownable */
+  --color-brand: #0d6e3f;
+  --color-brand-light: #10b259;
+  --color-brand-dark: #094d2c;
+  --color-brand-50: #eefbf3;
+  --color-brand-100: #d6f5e3;
+  --color-brand-200: #afebc8;
+  --color-brand-800: #0a5a33;
+  --color-brand-900: #074225;
+  --color-brand-950: #04291a;
 
-  /* Warm cream (like milk) */
-  --color-cream: #fefce8;
-  --color-cream-dark: #f5f0d0;
+  /* Lime accent - sharp, electric, the "greener" signal */
+  --color-lime: #84cc16;
+  --color-lime-light: #a3e635;
+  --color-lime-dark: #65a30d;
 
-  /* Accent amber (sunset over fields) */
-  --color-sunset: #f59e0b;
-  --color-sunset-light: #fbbf24;
-  --color-sunset-dark: #d97706;
-
-  /* Charcoal */
-  --color-charcoal: #1a2e1a;
-  --color-charcoal-light: #374937;
-  --color-charcoal-muted: #6b7c6b;
+  /* Neutrals - warm undertone */
+  --color-ink: #0f1a0f;
+  --color-ink-light: #3d4a3d;
+  --color-ink-muted: #6b7b6b;
+  --color-ink-faint: #9ca89c;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f5f7f5;
+  --color-surface-sunken: #eef0ee;
+  --color-border: #e2e6e2;
+  --color-border-light: #f0f2f0;
 
   /* Semantic */
-  --color-better: #16a34a;
-  --color-worse: #dc2626;
+  --color-better: #0d6e3f;
+  --color-worse: #b91c1c;
   --color-neutral: #6b7280;
 
   /* Fonts */
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
 body {
   background: var(--color-background);
   color: var(--color-foreground);
-  font-family: var(--font-sans), system-ui, sans-serif;
+  font-family: var(--font-body), system-ui, sans-serif;
 }
 
-/* Smooth scrolling */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading), system-ui, sans-serif;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 8px;
+/* Subtle background texture */
+.hero-bg {
+  background:
+    radial-gradient(ellipse at 30% 0%, rgba(13, 110, 63, 0.04) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 100%, rgba(132, 204, 22, 0.03) 0%, transparent 60%);
 }
 
-::-webkit-scrollbar-track {
-  background: var(--color-grass-50);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--color-grass-200);
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--color-grass);
-}
-
-/* Grass pattern background for hero */
-.grass-pattern {
-  background-image:
-    radial-gradient(ellipse at 20% 80%, rgba(22, 163, 74, 0.08) 0%, transparent 50%),
-    radial-gradient(ellipse at 80% 20%, rgba(245, 158, 11, 0.05) 0%, transparent 50%),
-    radial-gradient(ellipse at 50% 50%, rgba(22, 163, 74, 0.03) 0%, transparent 80%);
-}
-
-/* Animated gradient for the hero headline */
+/* Gradient text - brand green */
 .gradient-text {
-  background: linear-gradient(135deg, var(--color-grass-dark), var(--color-grass), var(--color-grass-light));
+  background: linear-gradient(135deg, var(--color-brand-dark), var(--color-brand), var(--color-brand-light));
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
-/* Card hover effect */
+/* Card interactions */
 .metric-card {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .metric-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(22, 163, 74, 0.12);
+  box-shadow: 0 8px 24px rgba(13, 110, 63, 0.08);
 }
 
-/* Search input styling */
+/* Search inputs */
 .search-input:focus {
   outline: none;
-  box-shadow: 0 0 0 3px rgba(22, 163, 74, 0.2);
+  box-shadow: 0 0 0 3px rgba(13, 110, 63, 0.15);
 }
 
-/* Pulse animation for the headline number */
-@keyframes subtlePulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.02); }
-}
-
-.headline-number {
-  animation: subtlePulse 3s ease-in-out infinite;
-}
-
-/* Cow bounce */
-@keyframes cowBounce {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
-}
-
-.cow-bounce {
-  animation: cowBounce 2s ease-in-out infinite;
-}
-
-/* Stagger animation for cards */
+/* Stagger animation */
 @keyframes fadeInUp {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
   }
   to {
     opacity: 1;
@@ -132,11 +99,17 @@ html {
 }
 
 .animate-fade-in-up {
-  animation: fadeInUp 0.5s ease-out forwards;
+  animation: fadeInUp 0.4s ease-out forwards;
   opacity: 0;
 }
 
-/* Better/worse indicator colours */
+/* Verdict colours */
 .better { color: var(--color-better); }
 .worse { color: var(--color-worse); }
 .same { color: var(--color-neutral); }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-ink-faint); }

@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { ComparisonResult } from "@/lib/types";
 import { formatCurrency } from "@/lib/calculations";
 import MetricCard from "./MetricCard";
@@ -16,12 +17,17 @@ import {
   Building2,
   PiggyBank,
   Receipt,
-  TrendingUp,
   Calendar,
   Sparkles,
+  ChevronUp,
+  List,
+  ExternalLink,
 } from "lucide-react";
-import AffiliateCard, { AffiliateBanner } from "./AffiliateCard";
+import AffiliateCard from "./AffiliateCard";
+import type { AffiliateType } from "./AffiliateCard";
 import EmailCapture from "./EmailCapture";
+import SchoolsComparison from "./SchoolsComparison";
+import CrimeComparison from "./CrimeComparison";
 
 interface ComparisonResultsProps {
   result: ComparisonResult;
@@ -29,8 +35,24 @@ interface ComparisonResultsProps {
 
 const BED_LABELS = { one: "1-bed", two: "2-bed", three: "3-bed" };
 
+const JUMP_SECTIONS = [
+  { id: "section-summary", label: "Summary" },
+  { id: "section-costs", label: "Costs" },
+  { id: "section-buying", label: "Buying" },
+  { id: "section-schools", label: "Schools" },
+  { id: "section-crime", label: "Crime" },
+];
+
+const AFFILIATE_CONFIGS: { type: AffiliateType; icon: string; label: string }[] = [
+  { type: "mortgage", icon: "🏡", label: "Mortgages" },
+  { type: "removals", icon: "📦", label: "Removals" },
+  { type: "broadband", icon: "📡", label: "Broadband" },
+  { type: "energy", icon: "⚡", label: "Energy" },
+];
+
 export default function ComparisonResults({ result }: ComparisonResultsProps) {
   const { from, to, verdict, totalAnnualDiff, isPersonalised } = result;
+  const [jumpMenuOpen, setJumpMenuOpen] = useState(false);
 
   const rentFrom =
     result.bedSize === "one"
@@ -90,6 +112,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
 
       {/* Headline card */}
       <div
+        id="section-summary"
         className={`rounded-3xl border-2 ${headline.bg} p-8 mb-8 text-center`}
       >
         <BrandMark
@@ -133,7 +156,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       </div>
 
       {/* Tax breakdown - show people exactly where their money goes */}
-      <div className="bg-surface rounded-2xl p-6 border border-brand-100 mb-8">
+      <div id="section-costs" className="bg-surface rounded-2xl p-6 border border-brand-100 mb-8">
         <h3 className="font-bold text-ink mb-1 flex items-center gap-2">
           <Receipt className="w-5 h-5 text-brand" />
           Your Take-Home Pay
@@ -347,7 +370,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       </div>
 
       {/* House prices */}
-      <div className="mt-8 bg-surface rounded-2xl p-6 border border-brand-100">
+      <div id="section-buying" className="mt-8 bg-surface rounded-2xl p-6 border border-brand-100">
         <h3 className="font-semibold text-ink mb-4 flex items-center gap-2">
           <Home className="w-5 h-5 text-brand" />
           If You&apos;re Buying
@@ -382,7 +405,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           </p>
         )}
 
-        {/* Affordability ratio - deeply useful context */}
+        {/* Affordability ratio */}
         <div className="mt-4 grid grid-cols-2 gap-4">
           <div className="bg-brand-50/50 rounded-xl p-3">
             <p className="text-xs text-ink-muted mb-1">
@@ -409,10 +432,20 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         </div>
       </div>
 
-      {/* Affiliate: contextual mortgage + removals */}
+      {/* Contextual affiliate cards - mortgage + removals */}
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
         <AffiliateCard type="mortgage" toName={to.name} />
         <AffiliateCard type="removals" toName={to.name} />
+      </div>
+
+      {/* School quality + Crime comparison */}
+      <div className="mt-8 grid grid-cols-1 gap-6">
+        <div id="section-schools">
+          <SchoolsComparison from={from} to={to} />
+        </div>
+        <div id="section-crime">
+          <CrimeComparison from={from} to={to} />
+        </div>
       </div>
 
       {/* Pint index */}
@@ -456,22 +489,29 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         </div>
       </div>
 
-      {/* Full affiliate banner */}
-      <div className="mt-8">
-        <AffiliateBanner toName={to.name} />
-      </div>
-
-      {/* Broadband + Energy affiliate cards */}
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
-        <AffiliateCard type="broadband" toName={to.name} />
-        <AffiliateCard type="energy" toName={to.name} />
-      </div>
-
       {/* Email capture */}
       <EmailCapture context={`${from.id}-vs-${to.id}`} />
 
+      {/* Subtle affiliate links row */}
+      <div className="mt-4 mb-4 rounded-xl border border-border-light bg-surface-raised/50 px-5 py-3">
+        <div className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+          <span className="text-xs text-ink-faint">Moving? Compare deals:</span>
+          {AFFILIATE_CONFIGS.map(({ type, icon, label }) => (
+            <a
+              key={type}
+              href={`#affiliate-${type}_compare`}
+              className="inline-flex items-center gap-1.5 text-xs text-ink-muted hover:text-brand transition-colors"
+            >
+              <span>{icon}</span>
+              {label}
+              <ExternalLink className="w-2.5 h-2.5" />
+            </a>
+          ))}
+        </div>
+      </div>
+
       {/* Data disclaimer */}
-      <p className="text-xs text-ink-muted text-center mt-8 max-w-2xl mx-auto">
+      <p className="text-xs text-ink-muted text-center mt-4 max-w-2xl mx-auto">
         Data sourced from ONS, HMRC, and local authorities.{" "}
         {isPersonalised
           ? "Costs are location-specific; your salary is applied to both locations."
@@ -484,6 +524,36 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           But at least now you know where to start.
         </span>
       </p>
+
+      {/* Floating "Jump to" navigation */}
+      <div className="fixed bottom-6 right-6 z-40">
+        {jumpMenuOpen && (
+          <div className="mb-2 bg-surface rounded-xl border border-brand-100 shadow-xl shadow-brand/10 p-2 min-w-[140px] animate-fade-in-up">
+            {JUMP_SECTIONS.map((section) => (
+              <a
+                key={section.id}
+                href={`#${section.id}`}
+                onClick={() => setJumpMenuOpen(false)}
+                className="block px-3 py-2 text-sm text-ink-muted hover:text-brand hover:bg-brand-50 rounded-lg transition-colors"
+              >
+                {section.label}
+              </a>
+            ))}
+          </div>
+        )}
+        <button
+          onClick={() => setJumpMenuOpen(!jumpMenuOpen)}
+          className="flex items-center gap-2 px-4 py-2.5 bg-brand text-white rounded-full shadow-lg shadow-brand/25 text-sm font-medium hover:bg-brand-dark transition-all"
+          aria-label="Jump to section"
+        >
+          {jumpMenuOpen ? (
+            <ChevronUp className="w-4 h-4" />
+          ) : (
+            <List className="w-4 h-4" />
+          )}
+          <span className="hidden sm:inline">Jump to</span>
+        </button>
+      </div>
     </div>
   );
 }

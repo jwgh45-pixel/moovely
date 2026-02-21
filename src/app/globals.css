@@ -113,3 +113,29 @@ html {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
 ::-webkit-scrollbar-thumb:hover { background: var(--color-ink-faint); }
+
+/* Keyboard focus outlines */
+*:focus-visible {
+  outline: 2px solid var(--color-brand);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* Hide scrollbar utility */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+/* Personalisation panel pulse animation */
+@keyframes borderPulse {
+  0%, 100% { border-color: rgba(13, 110, 63, 0.2); }
+  50% { border-color: rgba(13, 110, 63, 0.5); }
+}
+
+.animate-border-pulse {
+  animation: borderPulse 2s ease-in-out 3;
+}

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, ArrowLeftRight, Sparkles } from "lucide-react";
+import { ArrowRight, ArrowLeftRight, Sparkles, ArrowUpDown } from "lucide-react";
 import { Location } from "@/lib/types";
 import LocationSearch from "./LocationSearch";
 import BrandMark from "./BrandMark";
@@ -57,12 +57,26 @@ export default function HeroSection() {
               accentColor="green"
             />
 
+            {/* Desktop swap button */}
             <button
               onClick={handleSwap}
               className="hidden md:flex w-10 h-10 shrink-0 items-center justify-center rounded-full border border-border hover:bg-surface-raised transition-colors mb-1"
               aria-label="Swap locations"
             >
               <ArrowLeftRight className="w-4 h-4 text-ink-muted" />
+            </button>
+
+            {/* Mobile swap button - horizontal divider with icon */}
+            <button
+              onClick={handleSwap}
+              className="md:hidden flex items-center gap-3 w-full py-1"
+              aria-label="Swap locations"
+            >
+              <div className="flex-1 h-px bg-border" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-full border border-border bg-surface-raised hover:bg-brand-50 transition-colors">
+                <ArrowUpDown className="w-3.5 h-3.5 text-ink-muted" />
+              </div>
+              <div className="flex-1 h-px bg-border" />
             </button>
 
             <LocationSearch

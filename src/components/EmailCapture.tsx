@@ -97,7 +97,7 @@ export default function EmailCapture({
             </span>
           </div>
           <h3 className="text-lg font-bold text-ink mb-1">
-            We&apos;re adding school ratings, crime data &amp; more
+            We&apos;re adding commute time data, GP surgery ratings &amp; more
           </h3>
           <p className="text-sm text-ink-muted">
             Get notified when we launch new features. One email, no spam.

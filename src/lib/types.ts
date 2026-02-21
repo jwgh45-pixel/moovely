@@ -21,6 +21,18 @@ export interface Location {
   groceryBasketWeekly: number; // typical weekly shop
   broadbandMonthly: number;
   energyMonthly: number; // average gas + electric
+
+  // School quality (Ofsted / Education Scotland / Estyn / ETI)
+  schoolsOutstandingPct: number; // % of schools rated Outstanding (or equivalent)
+  schoolsGoodPct: number; // % of schools rated Good (or equivalent)
+  schoolsTotal: number; // total number of schools in area
+  ofstedRating: "excellent" | "good" | "average" | "below-average"; // overall area summary
+
+  // Crime (Police.uk / PSNI / Police Scotland)
+  crimeRatePer1000: number; // total crimes per 1,000 residents per year
+  violentCrimePer1000: number; // violent/sexual offences per 1,000
+  burglaryPer1000: number; // burglary per 1,000
+  crimeLevel: "very-low" | "low" | "average" | "high" | "very-high"; // area summary
 }
 
 export type Region =

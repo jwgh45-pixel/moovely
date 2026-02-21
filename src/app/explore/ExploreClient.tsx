@@ -269,26 +269,30 @@ export default function ExploreClient() {
           )}
 
           {/* Sort tabs */}
-          <div className="flex gap-1 mb-4 bg-brand-50/50 p-1 rounded-xl w-fit">
-            {([
-              { field: "annualDiff" as SortField, label: "Best value", icon: TrendingUp },
-              { field: "rent" as SortField, label: "Cheapest rent", icon: Home },
-              { field: "salary" as SortField, label: "Highest salary", icon: Banknote },
-              { field: "housePrice" as SortField, label: "Cheapest to buy", icon: Home },
-            ]).map(({ field, label, icon: Icon }) => (
-              <button
-                key={field}
-                onClick={() => setSortField(field)}
-                className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all ${
-                  sortField === field
-                    ? "bg-white text-brand-dark shadow-sm"
-                    : "text-ink-muted hover:text-ink"
-                }`}
-              >
-                <Icon className="w-3.5 h-3.5" />
-                {label}
-              </button>
-            ))}
+          <div className="relative mb-4">
+            <div className="flex gap-1 bg-brand-50/50 p-1 rounded-xl w-fit max-w-full overflow-x-auto scrollbar-hide">
+              {([
+                { field: "annualDiff" as SortField, label: "Best value", icon: TrendingUp },
+                { field: "rent" as SortField, label: "Cheapest rent", icon: Home },
+                { field: "salary" as SortField, label: "Highest salary", icon: Banknote },
+                { field: "housePrice" as SortField, label: "Cheapest to buy", icon: Home },
+              ]).map(({ field, label, icon: Icon }) => (
+                <button
+                  key={field}
+                  onClick={() => setSortField(field)}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-xs font-medium transition-all whitespace-nowrap ${
+                    sortField === field
+                      ? "bg-white text-brand-dark shadow-sm"
+                      : "text-ink-muted hover:text-ink"
+                  }`}
+                >
+                  <Icon className="w-3.5 h-3.5 shrink-0" />
+                  {label}
+                </button>
+              ))}
+            </div>
+            {/* Right fade hint on mobile */}
+            <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-background to-transparent pointer-events-none md:hidden rounded-r-xl" />
           </div>
 
           {/* Results table */}

@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ComparisonResult } from "@/lib/types";
+import { ComparisonResult, SpendingBreakdown } from "@/lib/types";
 import { formatCurrency } from "@/lib/calculations";
 import MetricCard from "./MetricCard";
 import BrandMark from "./BrandMark";
@@ -26,8 +26,7 @@ import {
 import AffiliateCard from "./AffiliateCard";
 import type { AffiliateType } from "./AffiliateCard";
 import EmailCapture from "./EmailCapture";
-import SchoolsComparison from "./SchoolsComparison";
-import CrimeComparison from "./CrimeComparison";
+import LifestyleTabs from "./LifestyleTabs";
 
 interface ComparisonResultsProps {
   result: ComparisonResult;
@@ -39,8 +38,7 @@ const JUMP_SECTIONS = [
   { id: "section-summary", label: "Summary" },
   { id: "section-costs", label: "Costs" },
   { id: "section-buying", label: "Buying" },
-  { id: "section-schools", label: "Schools" },
-  { id: "section-crime", label: "Crime" },
+  { id: "section-lifestyle", label: "Lifestyle" },
 ];
 
 const AFFILIATE_CONFIGS: { type: AffiliateType; icon: string; label: string }[] = [
@@ -49,6 +47,81 @@ const AFFILIATE_CONFIGS: { type: AffiliateType; icon: string; label: string }[] 
   { type: "broadband", icon: "📡", label: "Broadband" },
   { type: "energy", icon: "⚡", label: "Energy" },
 ];
+
+// Spending bar colours
+const SPEND_COLOURS = [
+  { key: "rent", label: "Rent", color: "bg-rose-400" },
+  { key: "councilTax", label: "Council Tax", color: "bg-amber-400" },
+  { key: "commute", label: "Commute", color: "bg-sky-400" },
+  { key: "groceries", label: "Groceries", color: "bg-orange-400" },
+  { key: "energy", label: "Energy", color: "bg-purple-400" },
+  { key: "childcare", label: "Childcare", color: "bg-pink-400" },
+  { key: "lifestyle", label: "Lifestyle", color: "bg-indigo-400" },
+  { key: "disposable", label: "Disposable", color: "bg-better" },
+] as const;
+
+function SpendingBar({
+  spending,
+  takeHome,
+  locationName,
+}: {
+  spending: SpendingBreakdown;
+  takeHome: number;
+  locationName: string;
+}) {
+  const total = takeHome;
+  if (total <= 0) return null;
+
+  // Filter out zero categories
+  const segments = SPEND_COLOURS.filter(
+    (c) => spending[c.key as keyof SpendingBreakdown] > 0
+  );
+
+  return (
+    <div>
+      <p className="text-sm font-medium text-ink mb-2">{locationName}</p>
+      <div className="w-full h-8 rounded-full overflow-hidden flex bg-surface-sunken">
+        {segments.map((seg) => {
+          const val = spending[seg.key as keyof SpendingBreakdown];
+          const pct = Math.max((val / total) * 100, 0);
+          if (pct < 1) return null;
+          return (
+            <div
+              key={seg.key}
+              className={`h-full ${seg.color} transition-all duration-500`}
+              style={{ width: `${pct}%` }}
+              title={`${seg.label}: ${formatCurrency(val)}/mo`}
+            />
+          );
+        })}
+      </div>
+      <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2">
+        {segments.map((seg) => {
+          const val = spending[seg.key as keyof SpendingBreakdown];
+          if (val <= 0) return null;
+          return (
+            <span key={seg.key} className="flex items-center gap-1 text-xs text-ink-muted">
+              <span className={`inline-block w-2 h-2 rounded-full ${seg.color}`} />
+              {seg.label}: {formatCurrency(val)}
+            </span>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function SectionDivider({ label }: { label: string }) {
+  return (
+    <div className="flex items-center gap-3 my-8">
+      <div className="flex-1 h-px bg-brand-100" />
+      <span className="text-xs font-medium text-ink-muted uppercase tracking-wider">
+        {label}
+      </span>
+      <div className="flex-1 h-px bg-brand-100" />
+    </div>
+  );
+}
 
 export default function ComparisonResults({ result }: ComparisonResultsProps) {
   const { from, to, verdict, totalAnnualDiff, isPersonalised } = result;
@@ -99,6 +172,18 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
       bg: "bg-brand-50 border-brand/20",
     };
   })();
+
+  // Accent colours for alternating metric card left borders
+  const accentColors = [
+    "border-l-brand",
+    "border-l-lime",
+    "border-l-sky-400",
+    "border-l-amber-400",
+    "border-l-rose-400",
+    "border-l-purple-400",
+    "border-l-indigo-400",
+    "border-l-pink-400",
+  ];
 
   return (
     <div className="max-w-4xl mx-auto">
@@ -155,18 +240,20 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         </div>
       </div>
 
-      {/* Tax breakdown - show people exactly where their money goes */}
-      <div id="section-costs" className="bg-surface rounded-2xl p-6 border border-brand-100 mb-8">
-        <h3 className="font-bold text-ink mb-1 flex items-center gap-2">
-          <Receipt className="w-5 h-5 text-brand" />
-          Your Take-Home Pay
-        </h3>
-        <p className="text-xs text-ink-muted mb-4">
-          {isPersonalised
-            ? "Based on your salary - showing what you'd actually receive in each location."
-            : "Based on area median salaries. Personalise above to see your own numbers."}
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* Tax breakdown - standalone panels with divider (no card wrapper) */}
+      <div id="section-costs">
+        <div className="mb-2">
+          <h3 className="font-bold text-ink mb-1 flex items-center gap-2">
+            <Receipt className="w-5 h-5 text-brand" />
+            Your Take-Home Pay
+          </h3>
+          <p className="text-xs text-ink-muted mb-4">
+            {isPersonalised
+              ? "Based on your salary - showing what you'd actually receive in each location."
+              : "Based on area median salaries. Personalise above to see your own numbers."}
+          </p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
           {[
             { loc: from, tax: result.takeHomeFrom, salary: result.salaryFrom },
             { loc: to, tax: result.takeHomeTo, salary: result.salaryTo },
@@ -213,7 +300,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         </div>
         {result.takeHomeDiff !== 0 && (
           <p
-            className={`mt-3 text-sm text-center ${
+            className={`text-sm text-center mb-4 ${
               result.takeHomeDiff > 0 ? "text-better" : result.takeHomeDiff < 0 ? "text-worse" : "text-ink-muted"
             }`}
           >
@@ -229,47 +316,54 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         )}
       </div>
 
-      {/* Real wages breakdown */}
-      <div className="mb-6">
-        <h3 className="text-lg font-bold text-ink mb-1 flex items-center gap-2">
-          <PiggyBank className="w-5 h-5 text-brand" />
-          The Real Wages Breakdown
-        </h3>
-        <p className="text-sm text-ink-muted mb-4">
-          What you have left after all the essentials. This is the number that
-          matters.
-        </p>
-      </div>
+      <SectionDivider label="Where Your Money Goes" />
 
-      {/* Disposable income comparison */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div className="bg-surface rounded-2xl p-6 border border-brand-100">
-          <p className="text-sm text-ink-muted mb-1">{from.name}</p>
-          <p className="text-xs text-ink-muted mb-3">
-            Monthly after essentials
-          </p>
-          <p className="text-3xl font-bold text-ink">
-            {formatCurrency(result.monthlyDisposableFrom)}
-            <span className="text-base font-normal text-ink-muted">
-              /mo
-            </span>
+      {/* Stacked spending bars - replaces old disposable income cards */}
+      <div className="mb-8">
+        <div className="mb-4">
+          <h3 className="text-lg font-bold text-ink mb-1 flex items-center gap-2">
+            <PiggyBank className="w-5 h-5 text-brand" />
+            Where Your Money Goes
+          </h3>
+          <p className="text-sm text-ink-muted">
+            How your monthly take-home splits between costs and what you keep.
           </p>
         </div>
-        <div className="bg-surface rounded-2xl p-6 border border-brand-100">
-          <p className="text-sm text-ink-muted mb-1">{to.name}</p>
-          <p className="text-xs text-ink-muted mb-3">
-            Monthly after essentials
-          </p>
-          <p className="text-3xl font-bold text-ink">
-            {formatCurrency(result.monthlyDisposableTo)}
-            <span className="text-base font-normal text-ink-muted">
-              /mo
-            </span>
-          </p>
+        <div className="bg-surface rounded-2xl p-6 border border-brand-100 space-y-6">
+          <SpendingBar
+            spending={result.spendingFrom}
+            takeHome={result.takeHomeFrom.monthlyTakeHome}
+            locationName={from.name}
+          />
+          <SpendingBar
+            spending={result.spendingTo}
+            takeHome={result.takeHomeTo.monthlyTakeHome}
+            locationName={to.name}
+          />
+
+          {/* Summary comparison */}
+          <div className="grid grid-cols-2 gap-4 pt-2 border-t border-brand-100">
+            <div>
+              <p className="text-xs text-ink-muted mb-1">{from.name} disposable</p>
+              <p className="text-2xl font-bold text-ink">
+                {formatCurrency(result.monthlyDisposableFrom)}
+                <span className="text-sm font-normal text-ink-muted">/mo</span>
+              </p>
+            </div>
+            <div>
+              <p className="text-xs text-ink-muted mb-1">{to.name} disposable</p>
+              <p className="text-2xl font-bold text-ink">
+                {formatCurrency(result.monthlyDisposableTo)}
+                <span className="text-sm font-normal text-ink-muted">/mo</span>
+              </p>
+            </div>
+          </div>
         </div>
       </div>
 
-      {/* Metric breakdown cards */}
+      <SectionDivider label="Living Costs" />
+
+      {/* Metric breakdown cards with expandable detail and accent borders */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {!isPersonalised && (
           <MetricCard
@@ -282,6 +376,13 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
             delay={0}
             fromName={from.name}
             toName={to.name}
+            accentColor={accentColors[0]}
+            detail={
+              <p className="text-xs text-ink-muted">
+                Median salary reflects what a typical worker earns in each area.
+                Enter your own salary above for a more accurate comparison.
+              </p>
+            }
           />
         )}
         <MetricCard
@@ -294,6 +395,32 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           delay={50}
           fromName={from.name}
           toName={to.name}
+          accentColor={accentColors[1]}
+          detail={
+            <div className="space-y-2">
+              <p className="text-xs font-medium text-ink mb-2">All sizes:</p>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="text-ink-muted">1-bed</div>
+                <div className="text-ink-muted">2-bed</div>
+                <div className="text-ink-muted">3-bed</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="font-medium text-ink">{formatCurrency(from.rentOneBed)}</div>
+                <div className="font-medium text-ink">{formatCurrency(from.rentTwoBed)}</div>
+                <div className="font-medium text-ink">{formatCurrency(from.rentThreeBed)}</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs">
+                <div className="font-medium text-ink">{formatCurrency(to.rentOneBed)}</div>
+                <div className="font-medium text-ink">{formatCurrency(to.rentTwoBed)}</div>
+                <div className="font-medium text-ink">{formatCurrency(to.rentThreeBed)}</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2 text-xs text-ink-muted">
+                <div className="truncate">{from.name}</div>
+                <div></div>
+                <div className="truncate">{to.name}</div>
+              </div>
+            </div>
+          }
         />
         <MetricCard
           label="Council Tax (Band D)"
@@ -305,17 +432,38 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           delay={100}
           fromName={from.name}
           toName={to.name}
+          accentColor={accentColors[2]}
+          detail={
+            <p className="text-xs text-ink-muted">
+              Band D is the standard benchmark. Your actual band depends on
+              your property value. Most homes fall between Band C and E.
+            </p>
+          }
         />
         <MetricCard
-          label="Commute"
-          fromValue={from.commuteMonthly}
-          toValue={to.commuteMonthly}
+          label={`Commute${result.commuteType === "wfh" ? " (WFH)" : ""}`}
+          fromValue={result.commuteType === "wfh" ? 0 : from.commuteMonthly}
+          toValue={result.commuteType === "wfh" ? 0 : to.commuteMonthly}
           annualDiff={result.commuteDiff}
           format="currency-monthly"
           icon={<Train className="w-5 h-5" />}
           delay={150}
           fromName={from.name}
           toName={to.name}
+          accentColor={accentColors[3]}
+          detail={
+            result.commuteType === "wfh" ? (
+              <p className="text-xs text-ink-muted">
+                You work from home, so commute costs are zeroed out. Change this in the
+                personalisation panel above if your situation changes.
+              </p>
+            ) : (
+              <p className="text-xs text-ink-muted">
+                Based on average monthly public transport / driving costs for the area.
+                Includes season tickets, fuel, and parking where relevant.
+              </p>
+            )
+          }
         />
         <MetricCard
           label="Weekly Groceries"
@@ -327,6 +475,13 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           delay={200}
           fromName={from.name}
           toName={to.name}
+          accentColor={accentColors[4]}
+          detail={
+            <p className="text-xs text-ink-muted">
+              Based on a typical weekly shop for essentials. Prices vary by supermarket
+              - this uses a weighted average across major chains.
+            </p>
+          }
         />
         <MetricCard
           label="Energy Bills"
@@ -338,6 +493,13 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           delay={250}
           fromName={from.name}
           toName={to.name}
+          accentColor={accentColors[5]}
+          detail={
+            <p className="text-xs text-ink-muted">
+              Average gas and electricity combined. Actual costs depend on
+              property size, insulation, and usage patterns.
+            </p>
+          }
         />
         {result.includesChildcare && (
           <MetricCard
@@ -350,27 +512,74 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
             delay={300}
             fromName={from.name}
             toName={to.name}
+            accentColor={accentColors[6]}
+            detail={
+              <p className="text-xs text-ink-muted">
+                Full-time nursery for one child. Part-time or childminder costs
+                will be lower. Check gov.uk for funded hours you may be eligible for.
+              </p>
+            }
           />
         )}
         <MetricCard
           label="Lifestyle (Pints, Cinema, Gym)"
-          fromValue={
-            from.pintOfBeer * 8 + from.cinemaTicket * 2 + from.gymMembership
-          }
-          toValue={
-            to.pintOfBeer * 8 + to.cinemaTicket * 2 + to.gymMembership
-          }
+          fromValue={Math.round(
+            (from.pintOfBeer * 8 + from.cinemaTicket * 2 + from.gymMembership) *
+              result.lifestyleMultiplier
+          )}
+          toValue={Math.round(
+            (to.pintOfBeer * 8 + to.cinemaTicket * 2 + to.gymMembership) *
+              result.lifestyleMultiplier
+          )}
           annualDiff={result.lifestyleDiff}
           format="currency-monthly"
           icon={<Beer className="w-5 h-5" />}
           delay={350}
           fromName={from.name}
           toName={to.name}
+          accentColor={accentColors[7]}
+          detail={
+            <div className="space-y-2 text-xs">
+              <p className="text-ink-muted mb-2">
+                {result.lifestyleMultiplier === 0.5
+                  ? "Scaled to homebody level (50%)"
+                  : result.lifestyleMultiplier === 1.5
+                  ? "Scaled to social butterfly level (150%)"
+                  : "Based on average lifestyle spending"}
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {[from, to].map((loc) => (
+                  <div key={loc.id}>
+                    <p className="font-medium text-ink mb-1">{loc.name}</p>
+                    <div className="space-y-0.5 text-ink-muted">
+                      <div className="flex justify-between">
+                        <span>8 pints</span>
+                        <span>£{(loc.pintOfBeer * 8).toFixed(0)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>2 cinema</span>
+                        <span>£{(loc.cinemaTicket * 2).toFixed(0)}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Gym</span>
+                        <span>£{loc.gymMembership}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          }
         />
       </div>
 
-      {/* House prices */}
-      <div id="section-buying" className="mt-8 bg-surface rounded-2xl p-6 border border-brand-100">
+      <SectionDivider label="Property" />
+
+      {/* House prices - gradient background */}
+      <div
+        id="section-buying"
+        className="rounded-2xl p-6 border border-brand-100 bg-gradient-to-br from-brand-50 via-surface to-lime/5"
+      >
         <h3 className="font-semibold text-ink mb-4 flex items-center gap-2">
           <Home className="w-5 h-5 text-brand" />
           If You&apos;re Buying
@@ -407,7 +616,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
 
         {/* Affordability ratio */}
         <div className="mt-4 grid grid-cols-2 gap-4">
-          <div className="bg-brand-50/50 rounded-xl p-3">
+          <div className="bg-white/60 rounded-xl p-3">
             <p className="text-xs text-ink-muted mb-1">
               Price-to-income ratio
             </p>
@@ -418,7 +627,7 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
               {from.name} ({isPersonalised ? "your salary" : "median"})
             </p>
           </div>
-          <div className="bg-brand-50/50 rounded-xl p-3">
+          <div className="bg-white/60 rounded-xl p-3">
             <p className="text-xs text-ink-muted mb-1">
               Price-to-income ratio
             </p>
@@ -438,55 +647,11 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         <AffiliateCard type="removals" toName={to.name} />
       </div>
 
-      {/* School quality + Crime comparison */}
-      <div className="mt-8 grid grid-cols-1 gap-6">
-        <div id="section-schools">
-          <SchoolsComparison from={from} to={to} />
-        </div>
-        <div id="section-crime">
-          <CrimeComparison from={from} to={to} />
-        </div>
-      </div>
+      <SectionDivider label="Lifestyle" />
 
-      {/* Pint index */}
-      <div className="mt-6 bg-gradient-to-r from-lime/5 to-brand-50 rounded-2xl p-6 border border-lime/10">
-        <h3 className="font-semibold text-ink mb-2 flex items-center gap-2">
-          <Beer className="w-5 h-5 text-lime" />
-          The Pint Index
-        </h3>
-        <p className="text-sm text-ink-muted mb-3">
-          Because sometimes this is the only metric that really matters.
-        </p>
-        <div className="flex flex-wrap items-center gap-8">
-          <div>
-            <p className="text-xs text-ink-muted">{from.name}</p>
-            <p className="text-xl font-bold text-ink">
-              £{from.pintOfBeer.toFixed(2)}
-            </p>
-          </div>
-          <div className="text-2xl text-ink-muted">→</div>
-          <div>
-            <p className="text-xs text-ink-muted">{to.name}</p>
-            <p className="text-xl font-bold text-ink">
-              £{to.pintOfBeer.toFixed(2)}
-            </p>
-          </div>
-          <div className="ml-auto text-right">
-            <p className="text-xs text-ink-muted">
-              Annual savings (2 pints/week)
-            </p>
-            <p
-              className={`text-lg font-bold ${
-                from.pintOfBeer > to.pintOfBeer ? "text-better" : from.pintOfBeer < to.pintOfBeer ? "text-worse" : "text-ink-muted"
-              }`}
-            >
-              {formatCurrency(
-                Math.round((from.pintOfBeer - to.pintOfBeer) * 2 * 52),
-                true
-              )}
-            </p>
-          </div>
-        </div>
+      {/* Tabbed lifestyle section - Schools, Crime, Pint Index */}
+      <div id="section-lifestyle" className="mt-2">
+        <LifestyleTabs from={from} to={to} />
       </div>
 
       {/* Email capture */}

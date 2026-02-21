@@ -10,8 +10,19 @@ import {
   ChevronUp,
   Sparkles,
   X,
+  Car,
+  TrainFront,
+  House,
+  PartyPopper,
+  Sofa,
+  RotateCcw,
 } from "lucide-react";
-import { BedSize, PersonalisationOptions } from "@/lib/types";
+import {
+  BedSize,
+  CommuteType,
+  PersonalisationOptions,
+  DEFAULT_OPTIONS,
+} from "@/lib/types";
 import { formatCurrency } from "@/lib/calculations";
 
 interface PersonalisationPanelProps {
@@ -19,6 +30,18 @@ interface PersonalisationPanelProps {
   onChange: (options: PersonalisationOptions) => void;
   fromMedianSalary: number;
   toMedianSalary: number;
+}
+
+// Rough UK salary percentile brackets
+function getSalaryContext(salary: number): string | null {
+  if (salary < 15000) return "That's below the national minimum - double-check?";
+  if (salary < 22000) return "That's in the bottom 25% of UK earners";
+  if (salary < 30000) return "That's around the UK median salary";
+  if (salary < 40000) return "That's above average for the UK";
+  if (salary < 55000) return "That puts you in the top 25% of UK earners";
+  if (salary < 80000) return "That's in the top 10% of UK earners";
+  if (salary < 150000) return "That's in the top 5% - nice";
+  return "That's in the top 1% of UK earners";
 }
 
 export default function PersonalisationPanel({
@@ -36,6 +59,13 @@ export default function PersonalisationPanel({
   const panelRef = useRef<HTMLDivElement>(null);
 
   const isPersonalised = options.customSalary !== undefined;
+
+  const isDefault =
+    !options.customSalary &&
+    options.bedSize === "two" &&
+    !options.includeChildcare &&
+    options.commuteType === "public-transport" &&
+    options.lifestyleMultiplier === 1;
 
   // Pulse animation on first load (only once)
   useEffect(() => {
@@ -81,9 +111,22 @@ export default function PersonalisationPanel({
     onChange({ ...options, includeChildcare: include });
   };
 
+  const handleCommuteType = (commuteType: CommuteType) => {
+    onChange({ ...options, commuteType });
+  };
+
+  const handleLifestyle = (multiplier: number) => {
+    onChange({ ...options, lifestyleMultiplier: multiplier });
+  };
+
   const handleClearSalary = () => {
     setSalaryInput("");
     onChange({ ...options, customSalary: undefined });
+  };
+
+  const handleReset = () => {
+    setSalaryInput("");
+    onChange(DEFAULT_OPTIONS);
   };
 
   const scrollToPanel = () => {
@@ -96,6 +139,51 @@ export default function PersonalisationPanel({
     { value: "two", label: "2 bed", icon: "🛏🛏" },
     { value: "three", label: "3 bed", icon: "🛏🛏🛏" },
   ];
+
+  const commuteOptions: {
+    value: CommuteType;
+    label: string;
+    icon: React.ReactNode;
+  }[] = [
+    { value: "drive", label: "I drive", icon: <Car className="w-4 h-4" /> },
+    {
+      value: "public-transport",
+      label: "Public transport",
+      icon: <TrainFront className="w-4 h-4" />,
+    },
+    {
+      value: "wfh",
+      label: "Work from home",
+      icon: <House className="w-4 h-4" />,
+    },
+  ];
+
+  const lifestyleOptions: {
+    value: number;
+    label: string;
+    icon: React.ReactNode;
+  }[] = [
+    {
+      value: 0.5,
+      label: "Homebody",
+      icon: <Sofa className="w-4 h-4" />,
+    },
+    {
+      value: 1,
+      label: "Average",
+      icon: <Sliders className="w-4 h-4" />,
+    },
+    {
+      value: 1.5,
+      label: "Social butterfly",
+      icon: <PartyPopper className="w-4 h-4" />,
+    },
+  ];
+
+  const salaryContext =
+    isPersonalised && options.customSalary
+      ? getSalaryContext(options.customSalary)
+      : null;
 
   return (
     <>
@@ -154,10 +242,13 @@ export default function PersonalisationPanel({
               </button>
             </div>
 
-            <div className="space-y-5">
-              {/* Salary input */}
+            <div className="space-y-6">
+              {/* Step 1: Salary */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                  <span className="w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">
+                    1
+                  </span>
                   <PoundSterling className="w-4 h-4 text-brand" />
                   Your annual salary
                 </label>
@@ -168,7 +259,11 @@ export default function PersonalisationPanel({
                   <input
                     type="text"
                     inputMode="numeric"
-                    value={salaryInput ? Number(salaryInput).toLocaleString("en-GB") : ""}
+                    value={
+                      salaryInput
+                        ? Number(salaryInput).toLocaleString("en-GB")
+                        : ""
+                    }
                     onChange={(e) =>
                       handleSalaryChange(e.target.value.replace(/,/g, ""))
                     }
@@ -184,10 +279,10 @@ export default function PersonalisationPanel({
                     </button>
                   )}
                 </div>
-                {isPersonalised && (
+                {salaryContext && (
                   <p className="text-xs text-brand mt-1.5 flex items-center gap-1">
                     <Sparkles className="w-3 h-3" />
-                    All numbers below are calculated using YOUR salary
+                    {salaryContext}
                   </p>
                 )}
                 {!isPersonalised && (
@@ -197,9 +292,12 @@ export default function PersonalisationPanel({
                 )}
               </div>
 
-              {/* Bed size */}
+              {/* Step 2: Housing */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                  <span className="w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">
+                    2
+                  </span>
                   <BedDouble className="w-4 h-4 text-brand" />
                   How many bedrooms?
                 </label>
@@ -220,9 +318,72 @@ export default function PersonalisationPanel({
                 </div>
               </div>
 
-              {/* Childcare toggle */}
+              {/* Step 3: Commute */}
               <div>
                 <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                  <span className="w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">
+                    3
+                  </span>
+                  <TrainFront className="w-4 h-4 text-brand" />
+                  How do you commute?
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {commuteOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => handleCommuteType(opt.value)}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
+                        options.commuteType === opt.value
+                          ? "bg-brand text-white shadow-md shadow-brand/25"
+                          : "bg-brand-50 text-ink hover:bg-brand-100"
+                      }`}
+                    >
+                      {opt.icon}
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+                {options.commuteType === "wfh" && (
+                  <p className="text-xs text-brand mt-1.5 flex items-center gap-1">
+                    <Sparkles className="w-3 h-3" />
+                    Commute costs zeroed out for both locations
+                  </p>
+                )}
+              </div>
+
+              {/* Step 4: Lifestyle */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                  <span className="w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">
+                    4
+                  </span>
+                  <PartyPopper className="w-4 h-4 text-brand" />
+                  Lifestyle intensity
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {lifestyleOptions.map((opt) => (
+                    <button
+                      key={opt.value}
+                      onClick={() => handleLifestyle(opt.value)}
+                      className={`py-2.5 px-3 rounded-xl text-xs font-medium transition-all flex items-center justify-center gap-1.5 ${
+                        options.lifestyleMultiplier === opt.value
+                          ? "bg-brand text-white shadow-md shadow-brand/25"
+                          : "bg-brand-50 text-ink hover:bg-brand-100"
+                      }`}
+                    >
+                      {opt.icon}
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Step 5: Family */}
+              <div>
+                <label className="flex items-center gap-2 text-sm font-medium text-ink mb-2">
+                  <span className="w-5 h-5 rounded-full bg-brand text-white text-xs flex items-center justify-center font-bold">
+                    5
+                  </span>
                   <Baby className="w-4 h-4 text-brand" />
                   Include childcare costs?
                 </label>
@@ -249,6 +410,19 @@ export default function PersonalisationPanel({
                   </button>
                 </div>
               </div>
+
+              {/* Reset link */}
+              {!isDefault && (
+                <div className="pt-1 text-center">
+                  <button
+                    onClick={handleReset}
+                    className="text-xs text-ink-muted hover:text-brand transition-colors inline-flex items-center gap-1"
+                  >
+                    <RotateCcw className="w-3 h-3" />
+                    Reset to defaults
+                  </button>
+                </div>
+              )}
             </div>
           </div>
         )}

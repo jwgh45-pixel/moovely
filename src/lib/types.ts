@@ -53,15 +53,23 @@ export type Country = "England" | "Scotland" | "Wales" | "Northern Ireland";
 
 export type BedSize = "one" | "two" | "three";
 
+export type CommuteType = "drive" | "public-transport" | "wfh";
+
+export type LifestyleIntensity = "homebody" | "average" | "social-butterfly";
+
 export interface PersonalisationOptions {
   customSalary?: number; // if set, overrides median for both locations
   bedSize: BedSize;
   includeChildcare: boolean;
+  commuteType: CommuteType;
+  lifestyleMultiplier: number; // 0.5 = homebody, 1 = average, 1.5 = social butterfly
 }
 
 export const DEFAULT_OPTIONS: PersonalisationOptions = {
   bedSize: "two",
   includeChildcare: false,
+  commuteType: "public-transport",
+  lifestyleMultiplier: 1,
 };
 
 export interface ComparisonResult {
@@ -88,6 +96,22 @@ export interface ComparisonResult {
   bedSize: BedSize;
   includesChildcare: boolean;
   fiveYearDiff: number; // compounding difference over 5 years
+  commuteType: CommuteType;
+  lifestyleMultiplier: number;
+  // Monthly spending breakdown for stacked bars
+  spendingFrom: SpendingBreakdown;
+  spendingTo: SpendingBreakdown;
+}
+
+export interface SpendingBreakdown {
+  rent: number;
+  councilTax: number;
+  commute: number;
+  groceries: number;
+  energy: number;
+  childcare: number;
+  lifestyle: number;
+  disposable: number;
 }
 
 export type Verdict = "greener" | "not-greener" | "about-the-same";

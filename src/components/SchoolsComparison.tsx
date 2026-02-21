@@ -6,6 +6,7 @@ import { GraduationCap, Star, CheckCircle, AlertCircle } from "lucide-react";
 interface SchoolsComparisonProps {
   from: Location;
   to: Location;
+  bare?: boolean;
 }
 
 const RATING_CONFIG = {
@@ -82,6 +83,7 @@ function ProgressBar({
 export default function SchoolsComparison({
   from,
   to,
+  bare = false,
 }: SchoolsComparisonProps) {
   const fromCombined = from.schoolsOutstandingPct + from.schoolsGoodPct;
   const toCombined = to.schoolsOutstandingPct + to.schoolsGoodPct;
@@ -93,11 +95,13 @@ export default function SchoolsComparison({
       : "same";
 
   return (
-    <div className="bg-surface rounded-2xl p-6 border border-brand-100">
+    <div className={bare ? "" : "bg-surface rounded-2xl p-6 border border-brand-100"}>
+      {!bare && (
       <h3 className="font-semibold text-ink mb-1 flex items-center gap-2">
         <GraduationCap className="w-5 h-5 text-brand" />
         School Quality
       </h3>
+      )}
       <p className="text-xs text-ink-muted mb-5">
         Percentage of schools rated Outstanding or Good by Ofsted (England),
         Education Scotland, Estyn (Wales), or ETI (Northern Ireland).

@@ -180,7 +180,11 @@ export function compareLocations(
   const rentDiff = (rentFrom - rentTo) * 12;
 
   const councilTaxDiff = from.councilTaxBandD - to.councilTaxBandD;
-  const commuteDiff = (from.commuteMonthly - to.commuteMonthly) * 12;
+
+  // WFH zeroes out commute costs for both locations
+  const commuteFrom = options.commuteType === "wfh" ? 0 : from.commuteMonthly;
+  const commuteTo = options.commuteType === "wfh" ? 0 : to.commuteMonthly;
+  const commuteDiff = (commuteFrom - commuteTo) * 12;
 
   // Childcare only included if toggled on
   const childcareFrom = options.includeChildcare ? from.childcareMonthly : 0;
@@ -191,11 +195,12 @@ export function compareLocations(
     (from.groceryBasketWeekly - to.groceryBasketWeekly) * 52;
   const energyDiff = (from.energyMonthly - to.energyMonthly) * 12;
 
-  // Lifestyle costs (pint + cinema + gym monthly estimate)
+  // Lifestyle costs (pint + cinema + gym monthly estimate), scaled by intensity
+  const lm = options.lifestyleMultiplier;
   const lifestyleFrom =
-    from.pintOfBeer * 8 + from.cinemaTicket * 2 + from.gymMembership;
+    (from.pintOfBeer * 8 + from.cinemaTicket * 2 + from.gymMembership) * lm;
   const lifestyleTo =
-    to.pintOfBeer * 8 + to.cinemaTicket * 2 + to.gymMembership;
+    (to.pintOfBeer * 8 + to.cinemaTicket * 2 + to.gymMembership) * lm;
   const lifestyleDiff = (lifestyleFrom - lifestyleTo) * 12;
 
   // Total annual difference (positive = better off moving)
@@ -213,7 +218,7 @@ export function compareLocations(
   const monthlyEssentialsFrom =
     rentFrom +
     from.councilTaxBandD / 12 +
-    from.commuteMonthly +
+    commuteFrom +
     from.groceryBasketWeekly * 4.33 +
     from.energyMonthly +
     from.broadbandMonthly +
@@ -222,7 +227,7 @@ export function compareLocations(
   const monthlyEssentialsTo =
     rentTo +
     to.councilTaxBandD / 12 +
-    to.commuteMonthly +
+    commuteTo +
     to.groceryBasketWeekly * 4.33 +
     to.energyMonthly +
     to.broadbandMonthly +
@@ -250,6 +255,29 @@ export function compareLocations(
     verdict = "about-the-same";
   }
 
+  // Monthly spending breakdown for stacked bars
+  const spendingFrom = {
+    rent: rentFrom,
+    councilTax: Math.round(from.councilTaxBandD / 12),
+    commute: commuteFrom,
+    groceries: Math.round(from.groceryBasketWeekly * 4.33),
+    energy: from.energyMonthly,
+    childcare: childcareFrom,
+    lifestyle: Math.round(lifestyleFrom),
+    disposable: Math.round(monthlyDisposableFrom),
+  };
+
+  const spendingTo = {
+    rent: rentTo,
+    councilTax: Math.round(to.councilTaxBandD / 12),
+    commute: commuteTo,
+    groceries: Math.round(to.groceryBasketWeekly * 4.33),
+    energy: to.energyMonthly,
+    childcare: childcareTo,
+    lifestyle: Math.round(lifestyleTo),
+    disposable: Math.round(monthlyDisposableTo),
+  };
+
   return {
     from,
     to,
@@ -274,6 +302,10 @@ export function compareLocations(
     bedSize: options.bedSize,
     includesChildcare: options.includeChildcare,
     fiveYearDiff: totalAnnualDiff > 0 ? fiveYearDiff : -fiveYearDiff,
+    commuteType: options.commuteType,
+    lifestyleMultiplier: options.lifestyleMultiplier,
+    spendingFrom,
+    spendingTo,
   };
 }
 
@@ -287,6 +319,8 @@ export function quickCompare(
     customSalary,
     bedSize: "two",
     includeChildcare: false,
+    commuteType: "public-transport",
+    lifestyleMultiplier: 1,
   });
   return { annualDiff: result.totalAnnualDiff, verdict: result.verdict };
 }

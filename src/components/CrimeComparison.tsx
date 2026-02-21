@@ -6,6 +6,7 @@ import { Shield, AlertTriangle, CheckCircle, TrendingDown } from "lucide-react";
 interface CrimeComparisonProps {
   from: Location;
   to: Location;
+  bare?: boolean;
 }
 
 const CRIME_LEVEL_CONFIG = {
@@ -87,6 +88,7 @@ function getCrimeBarColor(level: Location["crimeLevel"]) {
 export default function CrimeComparison({
   from,
   to,
+  bare = false,
 }: CrimeComparisonProps) {
   const maxCrime = Math.max(from.crimeRatePer1000, to.crimeRatePer1000, UK_AVERAGE_CRIME) * 1.2;
   const safer =
@@ -97,11 +99,13 @@ export default function CrimeComparison({
       : "same";
 
   return (
-    <div className="bg-surface rounded-2xl p-6 border border-brand-100">
+    <div className={bare ? "" : "bg-surface rounded-2xl p-6 border border-brand-100"}>
+      {!bare && (
       <h3 className="font-semibold text-ink mb-1 flex items-center gap-2">
         <Shield className="w-5 h-5 text-brand" />
         Crime &amp; Safety
       </h3>
+      )}
       <p className="text-xs text-ink-muted mb-5">
         Total recorded crimes per 1,000 residents per year. Data from Police.uk,
         Police Scotland, and PSNI.

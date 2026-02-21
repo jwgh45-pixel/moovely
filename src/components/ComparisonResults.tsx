@@ -1,8 +1,10 @@
 "use client";
 
-import { useState } from "react";
-import { ComparisonResult, SpendingBreakdown } from "@/lib/types";
-import { formatCurrency } from "@/lib/calculations";
+import { useState, useMemo } from "react";
+import { ComparisonResult, SpendingBreakdown, PersonalisationOptions } from "@/lib/types";
+import { formatCurrency, calculateRequiredSalary } from "@/lib/calculations";
+import AffordabilityGauge from "./AffordabilityGauge";
+import MoveSummaryCard from "./MoveSummaryCard";
 import MetricCard from "./MetricCard";
 import BrandMark from "./BrandMark";
 import ShareButton from "./ShareButton";
@@ -22,6 +24,9 @@ import {
   ChevronUp,
   List,
   ExternalLink,
+  Target,
+  TrendingUp,
+  Share2,
 } from "lucide-react";
 import AffiliateCard from "./AffiliateCard";
 import type { AffiliateType } from "./AffiliateCard";
@@ -30,6 +35,7 @@ import LifestyleTabs from "./LifestyleTabs";
 
 interface ComparisonResultsProps {
   result: ComparisonResult;
+  options: PersonalisationOptions;
 }
 
 const BED_LABELS = { one: "1-bed", two: "2-bed", three: "3-bed" };
@@ -123,9 +129,15 @@ function SectionDivider({ label }: { label: string }) {
   );
 }
 
-export default function ComparisonResults({ result }: ComparisonResultsProps) {
+export default function ComparisonResults({ result, options }: ComparisonResultsProps) {
   const { from, to, verdict, totalAnnualDiff, isPersonalised } = result;
   const [jumpMenuOpen, setJumpMenuOpen] = useState(false);
+
+  // Reverse salary calculation
+  const reverseSalary = useMemo(
+    () => calculateRequiredSalary(from, to, options),
+    [from, to, options]
+  );
 
   const rentFrom =
     result.bedSize === "one"
@@ -230,6 +242,29 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           </div>
         )}
 
+        {/* Moving payback period - only when moving saves money */}
+        {verdict === "greener" && totalAnnualDiff > 0 && (() => {
+          const monthlySaving = totalAnnualDiff / 12;
+          const lowCost = 3000;
+          const highCost = 5000;
+          const lowMonths = Math.ceil(lowCost / monthlySaving);
+          const highMonths = Math.ceil(highCost / monthlySaving);
+          if (highMonths <= 24) {
+            return (
+              <div className="mt-4 inline-flex items-center gap-2 bg-white/80 px-4 py-2 rounded-xl text-sm">
+                <TrendingUp className="w-4 h-4 text-better" />
+                <span className="text-ink-muted">
+                  Moving costs ({formatCurrency(lowCost)}-{formatCurrency(highCost)}) paid back in{" "}
+                  <span className="font-bold text-better">
+                    {lowMonths}-{highMonths} months
+                  </span>
+                </span>
+              </div>
+            );
+          }
+          return null;
+        })()}
+
         <div className="flex items-center justify-center gap-4 mt-6">
           <ShareButton
             from={from}
@@ -239,6 +274,33 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           />
         </div>
       </div>
+
+      {/* Reverse salary calculator */}
+      {isPersonalised && (
+        <div className="rounded-2xl border border-brand-200 bg-gradient-to-r from-brand-50 to-surface p-6 mb-8">
+          <div className="flex items-center gap-2 mb-3">
+            <Target className="w-5 h-5 text-brand" />
+            <h3 className="font-bold text-ink">
+              What salary would you need in {to.name}?
+            </h3>
+          </div>
+          <p className="text-3xl md:text-4xl font-bold text-ink mb-2">
+            {formatCurrency(reverseSalary.requiredSalary)}
+          </p>
+          <p className="text-sm text-ink-muted mb-3">
+            To keep your current lifestyle, you&apos;d need to earn this in {to.name}.
+          </p>
+          <p
+            className={`text-sm font-medium ${
+              reverseSalary.medianDiff > 0 ? "text-worse" : "text-better"
+            }`}
+          >
+            That&apos;s {formatCurrency(Math.abs(reverseSalary.medianDiff))}{" "}
+            {reverseSalary.medianDiff > 0 ? "above" : "below"} the {to.name} median
+            ({formatCurrency(to.medianSalary)})
+          </p>
+        </div>
+      )}
 
       {/* Tax breakdown - standalone panels with divider (no card wrapper) */}
       <div id="section-costs">
@@ -357,6 +419,18 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
                 <span className="text-sm font-normal text-ink-muted">/mo</span>
               </p>
             </div>
+          </div>
+
+          {/* Affordability gauges */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3 pt-3 border-t border-brand-100">
+            <AffordabilityGauge
+              disposable={result.monthlyDisposableFrom}
+              locationName={from.name}
+            />
+            <AffordabilityGauge
+              disposable={result.monthlyDisposableTo}
+              locationName={to.name}
+            />
           </div>
         </div>
       </div>
@@ -673,6 +747,17 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
             </a>
           ))}
         </div>
+      </div>
+
+      {/* Shareable "Your Move" summary card */}
+      <div className="mt-8 mb-6">
+        <div className="flex items-center gap-2 mb-3">
+          <Share2 className="w-4 h-4 text-brand" />
+          <p className="text-sm font-medium text-ink">
+            Screenshot and share your results
+          </p>
+        </div>
+        <MoveSummaryCard result={result} />
       </div>
 
       {/* Data disclaimer */}

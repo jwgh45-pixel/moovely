@@ -309,6 +309,82 @@ export function compareLocations(
   };
 }
 
+/**
+ * Reverse salary calculator: "What salary would I need in the target city
+ * to keep the same disposable income I have now?"
+ *
+ * Works by calculating your current disposable income, then finding the gross
+ * salary in the target city that gives the same disposable income after all
+ * costs are deducted.
+ */
+export function calculateRequiredSalary(
+  from: Location,
+  to: Location,
+  options: PersonalisationOptions
+): { requiredSalary: number; medianDiff: number } {
+  const currentSalary = options.customSalary ?? from.medianSalary;
+  const currentTax = calculateTax(currentSalary, from.country);
+
+  // Current monthly costs in "from" location
+  const rentFrom = getRentForBedSize(from, options.bedSize);
+  const commuteFrom = options.commuteType === "wfh" ? 0 : from.commuteMonthly;
+  const childcareFrom = options.includeChildcare ? from.childcareMonthly : 0;
+  const lm = options.lifestyleMultiplier;
+  const lifestyleFrom =
+    (from.pintOfBeer * 8 + from.cinemaTicket * 2 + from.gymMembership) * lm;
+
+  const monthlyCostsFrom =
+    rentFrom +
+    from.councilTaxBandD / 12 +
+    commuteFrom +
+    from.groceryBasketWeekly * 4.33 +
+    from.energyMonthly +
+    from.broadbandMonthly +
+    childcareFrom +
+    lifestyleFrom;
+
+  const currentDisposable = currentTax.monthlyTakeHome - monthlyCostsFrom;
+
+  // Monthly costs in "to" location
+  const rentTo = getRentForBedSize(to, options.bedSize);
+  const commuteTo = options.commuteType === "wfh" ? 0 : to.commuteMonthly;
+  const childcareTo = options.includeChildcare ? to.childcareMonthly : 0;
+  const lifestyleTo =
+    (to.pintOfBeer * 8 + to.cinemaTicket * 2 + to.gymMembership) * lm;
+
+  const monthlyCostsTo =
+    rentTo +
+    to.councilTaxBandD / 12 +
+    commuteTo +
+    to.groceryBasketWeekly * 4.33 +
+    to.energyMonthly +
+    to.broadbandMonthly +
+    childcareTo +
+    lifestyleTo;
+
+  // Required monthly take-home in target = disposable + costs
+  const requiredMonthlyTakeHome = currentDisposable + monthlyCostsTo;
+  const requiredAnnualTakeHome = requiredMonthlyTakeHome * 12;
+
+  // Binary search for the gross salary that yields this take-home
+  let low = 0;
+  let high = 500_000;
+  for (let i = 0; i < 50; i++) {
+    const mid = (low + high) / 2;
+    const tax = calculateTax(mid, to.country);
+    if (tax.takeHome < requiredAnnualTakeHome) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+
+  const requiredSalary = Math.round((low + high) / 2);
+  const medianDiff = requiredSalary - to.medianSalary;
+
+  return { requiredSalary, medianDiff };
+}
+
 // Quick comparison for ranking tables (explore page)
 export function quickCompare(
   from: Location,

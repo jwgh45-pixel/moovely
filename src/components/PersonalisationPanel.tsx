@@ -24,12 +24,14 @@ import {
   DEFAULT_OPTIONS,
 } from "@/lib/types";
 import { formatCurrency } from "@/lib/calculations";
+import { PERSONAS, PersonaId, savePersona, clearPersona } from "@/lib/presets";
 
 interface PersonalisationPanelProps {
   options: PersonalisationOptions;
   onChange: (options: PersonalisationOptions) => void;
   fromMedianSalary: number;
   toMedianSalary: number;
+  initialPersona?: PersonaId | null;
 }
 
 // Rough UK salary percentile brackets
@@ -49,6 +51,7 @@ export default function PersonalisationPanel({
   onChange,
   fromMedianSalary,
   toMedianSalary,
+  initialPersona,
 }: PersonalisationPanelProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [salaryInput, setSalaryInput] = useState(
@@ -56,6 +59,9 @@ export default function PersonalisationPanel({
   );
   const [showFloatingPill, setShowFloatingPill] = useState(false);
   const [hasAnimated, setHasAnimated] = useState(false);
+  const [activePersona, setActivePersona] = useState<PersonaId | null>(
+    initialPersona ?? null
+  );
   const panelRef = useRef<HTMLDivElement>(null);
 
   const isPersonalised = options.customSalary !== undefined;
@@ -126,7 +132,22 @@ export default function PersonalisationPanel({
 
   const handleReset = () => {
     setSalaryInput("");
+    setActivePersona(null);
+    clearPersona();
     onChange(DEFAULT_OPTIONS);
+  };
+
+  const handlePersona = (personaId: PersonaId) => {
+    const persona = PERSONAS.find((p) => p.id === personaId);
+    if (!persona) return;
+    // Keep custom salary if already entered, apply persona's other settings
+    const newOptions: PersonalisationOptions = {
+      ...persona.options,
+      customSalary: options.customSalary,
+    };
+    setActivePersona(personaId);
+    savePersona(personaId);
+    onChange(newOptions);
   };
 
   const scrollToPanel = () => {
@@ -240,6 +261,43 @@ export default function PersonalisationPanel({
               >
                 <ChevronUp className="w-5 h-5 text-ink-muted" />
               </button>
+            </div>
+
+            {/* Quick persona presets */}
+            <div className="mb-5">
+              <p className="text-xs text-ink-muted mb-3">I&apos;m a...</p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                {PERSONAS.map((persona) => (
+                  <button
+                    key={persona.id}
+                    onClick={() => handlePersona(persona.id)}
+                    className={`text-left p-3 rounded-xl border-2 transition-all ${
+                      activePersona === persona.id
+                        ? "border-brand bg-brand-50 shadow-md shadow-brand/10"
+                        : "border-brand-100 hover:border-brand/40 bg-surface"
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="text-lg">{persona.emoji}</span>
+                      <span className="text-sm font-semibold text-ink">
+                        {persona.label}
+                      </span>
+                    </div>
+                    <p className="text-xs text-ink-muted">
+                      {persona.description}
+                    </p>
+                  </button>
+                ))}
+              </div>
+
+              {/* Divider */}
+              <div className="flex items-center gap-3 mt-4">
+                <div className="flex-1 h-px bg-brand-100" />
+                <span className="text-[10px] text-ink-faint uppercase tracking-wider">
+                  or fine-tune below
+                </span>
+                <div className="flex-1 h-px bg-brand-100" />
+              </div>
             </div>
 
             <div className="space-y-6">

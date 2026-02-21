@@ -6,11 +6,22 @@ import { ArrowRight, ArrowLeftRight, Sparkles, ArrowUpDown } from "lucide-react"
 import { Location } from "@/lib/types";
 import LocationSearch from "./LocationSearch";
 import BrandMark from "./BrandMark";
+import { PERSONAS, PersonaId, savePersona } from "@/lib/presets";
 
 export default function HeroSection() {
   const [fromLocation, setFromLocation] = useState<Location | null>(null);
   const [toLocation, setToLocation] = useState<Location | null>(null);
+  const [selectedPersona, setSelectedPersona] = useState<PersonaId | null>(null);
   const router = useRouter();
+
+  const handlePersonaPill = (personaId: PersonaId) => {
+    if (selectedPersona === personaId) {
+      setSelectedPersona(null);
+    } else {
+      setSelectedPersona(personaId);
+      savePersona(personaId);
+    }
+  };
 
   const handleCompare = () => {
     if (fromLocation && toLocation) {
@@ -40,11 +51,30 @@ export default function HeroSection() {
           <span className="gradient-text">actually greener?</span>
         </h1>
 
-        <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed mb-10">
+        <p className="text-lg text-ink-muted max-w-xl mx-auto leading-relaxed mb-6">
           Compare any two places in the UK. See your real disposable income
           after tax, rent, bills, and the stuff that matters. Government data,
           not guesswork.
         </p>
+
+        {/* Persona pills */}
+        <div className="flex flex-wrap justify-center gap-2 mb-8">
+          <span className="text-sm text-ink-faint mr-1 self-center">I&apos;m a</span>
+          {PERSONAS.map((persona) => (
+            <button
+              key={persona.id}
+              onClick={() => handlePersonaPill(persona.id)}
+              className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-all ${
+                selectedPersona === persona.id
+                  ? "bg-brand text-white shadow-md shadow-brand/20"
+                  : "bg-white/80 text-ink-light border border-border hover:border-brand/30 hover:bg-brand-50"
+              }`}
+            >
+              <span>{persona.emoji}</span>
+              {persona.label}
+            </button>
+          ))}
+        </div>
 
         {/* Search card */}
         <div className="bg-surface rounded-2xl shadow-xl shadow-brand/5 border border-border p-6 md:p-8 max-w-3xl mx-auto">

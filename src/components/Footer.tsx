@@ -1,10 +1,11 @@
+import Link from "next/link";
 import BrandMark from "./BrandMark";
 
 export default function Footer() {
   return (
     <footer className="bg-brand-900 text-white py-12 mt-20">
       <div className="max-w-6xl mx-auto px-4">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center gap-2 mb-4">
               <BrandMark size="xs" />
@@ -29,6 +30,37 @@ export default function Footer() {
               <li>UK House Price Index</li>
               <li>HMRC Tax &amp; NI Rates 2025/26</li>
               <li>Local Authority Council Tax Rates</li>
+            </ul>
+          </div>
+
+          <div>
+            <h3 className="font-semibold mb-3 text-brand-100">Explore</h3>
+            <ul className="space-y-2 text-sm text-brand-200">
+              <li>
+                <Link href="/" className="hover:text-white transition-colors">
+                  Compare Two Places
+                </Link>
+              </li>
+              <li>
+                <Link href="/explore" className="hover:text-white transition-colors">
+                  Explore All Locations
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:text-white transition-colors">
+                  Blog &amp; Guides
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog/top-10-places-to-move-from-london" className="hover:text-white transition-colors">
+                  Top 10 From London
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog/cheapest-places-to-live-uk" className="hover:text-white transition-colors">
+                  Cheapest UK Places
+                </Link>
+              </li>
             </ul>
           </div>
 

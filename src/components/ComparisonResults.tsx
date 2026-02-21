@@ -20,6 +20,8 @@ import {
   Calendar,
   Sparkles,
 } from "lucide-react";
+import AffiliateCard, { AffiliateBanner } from "./AffiliateCard";
+import EmailCapture from "./EmailCapture";
 
 interface ComparisonResultsProps {
   result: ComparisonResult;
@@ -407,6 +409,12 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
         </div>
       </div>
 
+      {/* Affiliate: contextual mortgage + removals */}
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <AffiliateCard type="mortgage" toName={to.name} />
+        <AffiliateCard type="removals" toName={to.name} />
+      </div>
+
       {/* Pint index */}
       <div className="mt-6 bg-gradient-to-r from-lime/5 to-brand-50 rounded-2xl p-6 border border-lime/10">
         <h3 className="font-semibold text-ink mb-2 flex items-center gap-2">
@@ -447,6 +455,20 @@ export default function ComparisonResults({ result }: ComparisonResultsProps) {
           </div>
         </div>
       </div>
+
+      {/* Full affiliate banner */}
+      <div className="mt-8">
+        <AffiliateBanner toName={to.name} />
+      </div>
+
+      {/* Broadband + Energy affiliate cards */}
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <AffiliateCard type="broadband" toName={to.name} />
+        <AffiliateCard type="energy" toName={to.name} />
+      </div>
+
+      {/* Email capture */}
+      <EmailCapture context={`${from.id}-vs-${to.id}`} />
 
       {/* Data disclaimer */}
       <p className="text-xs text-ink-muted text-center mt-8 max-w-2xl mx-auto">

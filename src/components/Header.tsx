@@ -32,6 +32,12 @@ export default function Header() {
             Explore
           </Link>
           <Link
+            href="/blog"
+            className="text-ink-muted hover:text-brand transition-colors"
+          >
+            Blog
+          </Link>
+          <Link
             href="#how-it-works"
             className="text-ink-muted hover:text-brand transition-colors"
           >

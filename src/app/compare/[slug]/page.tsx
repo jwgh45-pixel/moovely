@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import { Metadata } from "next";
-import { getLocationById, locations } from "@/data/locations";
+import { getLocationById } from "@/data/locations";
 import { compareLocations, formatCurrency } from "@/lib/calculations";
-import ComparisonResults from "@/components/ComparisonResults";
 import ComparisonSearch from "./ComparisonSearch";
+import InteractiveComparison from "./InteractiveComparison";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -15,7 +15,9 @@ function parseSlug(slug: string): { fromId: string; toId: string } | null {
   return { fromId: match[1], toId: match[2] };
 }
 
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const parsed = parseSlug(slug);
   if (!parsed) return { title: "Comparison Not Found - Moovely" };
@@ -40,12 +42,18 @@ export async function generateMetadata({ params }: PageProps): Promise<Metadata>
       title: `${from.name} vs ${to.name} - Is the grass greener?`,
       description: `You'd be ${amount}/year ${direction} in ${to.name} compared to ${from.name}. See the full breakdown on Moovely.`,
       url: `https://moovely.co/compare/${slug}`,
+      images: [`/api/og?from=${parsed.fromId}&to=${parsed.toId}`],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: `${from.name} vs ${to.name} | Moovely`,
+      description: `${amount}/yr ${direction}. The grass ${result.verdict === "greener" ? "IS" : "isn't"} greener.`,
+      images: [`/api/og?from=${parsed.fromId}&to=${parsed.toId}`],
     },
   };
 }
 
 export function generateStaticParams() {
-  // Pre-generate pages for popular comparisons
   const popular = [
     "london-average-vs-manchester",
     "london-average-vs-bristol",
@@ -58,7 +66,6 @@ export function generateStaticParams() {
     "london-average-vs-cardiff",
     "cambridge-vs-york",
   ];
-
   return popular.map((slug) => ({ slug }));
 }
 
@@ -71,15 +78,10 @@ export default async function ComparePage({ params }: PageProps) {
   const to = getLocationById(parsed.toId);
   if (!from || !to) notFound();
 
-  const result = compareLocations(from, to);
-
   return (
     <div className="max-w-6xl mx-auto px-4 py-8">
-      {/* Search bar at top for new comparisons */}
       <ComparisonSearch currentFrom={from} currentTo={to} />
-
-      {/* Results */}
-      <ComparisonResults result={result} />
+      <InteractiveComparison from={from} to={to} />
     </div>
   );
 }

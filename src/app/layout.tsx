@@ -15,6 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://moovely.co"),
   title: "Moovely - The Grass Is Greener | UK Relocation Comparison",
   description:
     "Compare real wages between any two places in the UK. See your actual disposable income after tax, rent, bills, and commute. Built with government data, not guesswork.",

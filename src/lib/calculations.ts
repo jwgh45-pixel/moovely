@@ -1,11 +1,19 @@
-import { Location, TaxBreakdown, ComparisonResult, Verdict } from "./types";
+import {
+  Location,
+  TaxBreakdown,
+  ComparisonResult,
+  Verdict,
+  PersonalisationOptions,
+  BedSize,
+  DEFAULT_OPTIONS,
+} from "./types";
 
 // 2025/26 UK Tax Bands (England, Wales, NI)
 const PERSONAL_ALLOWANCE = 12_570;
 const BASIC_RATE_LIMIT = 50_270;
 const HIGHER_RATE_LIMIT = 125_140;
-const BASIC_RATE = 0.20;
-const HIGHER_RATE = 0.40;
+const BASIC_RATE = 0.2;
+const HIGHER_RATE = 0.4;
 const ADDITIONAL_RATE = 0.45;
 
 // Scotland has different income tax bands (2025/26)
@@ -15,7 +23,7 @@ const SCOTTISH_INTERMEDIATE_LIMIT = 43_662;
 const SCOTTISH_HIGHER_LIMIT = 75_000;
 const SCOTTISH_ADVANCED_LIMIT = 125_140;
 const SCOTTISH_STARTER_RATE = 0.19;
-const SCOTTISH_BASIC_RATE = 0.20;
+const SCOTTISH_BASIC_RATE = 0.2;
 const SCOTTISH_INTERMEDIATE_RATE = 0.21;
 const SCOTTISH_HIGHER_RATE = 0.42;
 const SCOTTISH_ADVANCED_RATE = 0.45;
@@ -45,21 +53,24 @@ export function calculateTax(
   const taxableIncome = Math.max(0, grossSalary - personalAllowance);
 
   if (country === "Scotland") {
-    // Scottish tax bands
     incomeTax = calculateScottishTax(taxableIncome);
   } else {
-    // rUK tax bands
     if (taxableIncome <= BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE) {
       incomeTax = taxableIncome * BASIC_RATE;
     } else if (taxableIncome <= HIGHER_RATE_LIMIT - personalAllowance) {
       incomeTax =
         (BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE) * BASIC_RATE +
-        (taxableIncome - (BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE)) * HIGHER_RATE;
+        (taxableIncome - (BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE)) *
+          HIGHER_RATE;
     } else {
       incomeTax =
         (BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE) * BASIC_RATE +
-        (HIGHER_RATE_LIMIT - personalAllowance - (BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE)) * HIGHER_RATE +
-        (taxableIncome - (HIGHER_RATE_LIMIT - personalAllowance)) * ADDITIONAL_RATE;
+        (HIGHER_RATE_LIMIT -
+          personalAllowance -
+          (BASIC_RATE_LIMIT - PERSONAL_ALLOWANCE)) *
+          HIGHER_RATE +
+        (taxableIncome - (HIGHER_RATE_LIMIT - personalAllowance)) *
+          ADDITIONAL_RATE;
     }
   }
 
@@ -67,7 +78,8 @@ export function calculateTax(
   let nationalInsurance = 0;
   if (grossSalary > NI_PRIMARY_THRESHOLD) {
     if (grossSalary <= NI_UPPER_EARNINGS_LIMIT) {
-      nationalInsurance = (grossSalary - NI_PRIMARY_THRESHOLD) * NI_MAIN_RATE;
+      nationalInsurance =
+        (grossSalary - NI_PRIMARY_THRESHOLD) * NI_MAIN_RATE;
     } else {
       nationalInsurance =
         (NI_UPPER_EARNINGS_LIMIT - NI_PRIMARY_THRESHOLD) * NI_MAIN_RATE +
@@ -76,30 +88,51 @@ export function calculateTax(
   }
 
   const takeHome = grossSalary - incomeTax - nationalInsurance;
+  const effectiveRate =
+    grossSalary > 0
+      ? ((incomeTax + nationalInsurance) / grossSalary) * 100
+      : 0;
 
   return {
     gross: grossSalary,
     incomeTax: Math.round(incomeTax),
     nationalInsurance: Math.round(nationalInsurance),
+    studentLoan: 0,
     takeHome: Math.round(takeHome),
     monthlyTakeHome: Math.round(takeHome / 12),
+    effectiveRate: Math.round(effectiveRate * 10) / 10,
   };
 }
 
 function calculateScottishTax(taxableIncome: number): number {
   const bands = [
-    { limit: SCOTTISH_STARTER_LIMIT - PERSONAL_ALLOWANCE, rate: SCOTTISH_STARTER_RATE },
-    { limit: SCOTTISH_BASIC_LIMIT - PERSONAL_ALLOWANCE, rate: SCOTTISH_BASIC_RATE },
-    { limit: SCOTTISH_INTERMEDIATE_LIMIT - PERSONAL_ALLOWANCE, rate: SCOTTISH_INTERMEDIATE_RATE },
-    { limit: SCOTTISH_HIGHER_LIMIT - PERSONAL_ALLOWANCE, rate: SCOTTISH_HIGHER_RATE },
-    { limit: SCOTTISH_ADVANCED_LIMIT - PERSONAL_ALLOWANCE, rate: SCOTTISH_ADVANCED_RATE },
+    {
+      limit: SCOTTISH_STARTER_LIMIT - PERSONAL_ALLOWANCE,
+      rate: SCOTTISH_STARTER_RATE,
+    },
+    {
+      limit: SCOTTISH_BASIC_LIMIT - PERSONAL_ALLOWANCE,
+      rate: SCOTTISH_BASIC_RATE,
+    },
+    {
+      limit: SCOTTISH_INTERMEDIATE_LIMIT - PERSONAL_ALLOWANCE,
+      rate: SCOTTISH_INTERMEDIATE_RATE,
+    },
+    {
+      limit: SCOTTISH_HIGHER_LIMIT - PERSONAL_ALLOWANCE,
+      rate: SCOTTISH_HIGHER_RATE,
+    },
+    {
+      limit: SCOTTISH_ADVANCED_LIMIT - PERSONAL_ALLOWANCE,
+      rate: SCOTTISH_ADVANCED_RATE,
+    },
     { limit: Infinity, rate: SCOTTISH_TOP_RATE },
   ];
 
   let tax = 0;
   let remaining = taxableIncome;
-
   let prevLimit = 0;
+
   for (const band of bands) {
     const bandWidth = band.limit - prevLimit;
     if (remaining <= 0) break;
@@ -112,22 +145,50 @@ function calculateScottishTax(taxableIncome: number): number {
   return tax;
 }
 
+function getRentForBedSize(location: Location, bedSize: BedSize): number {
+  switch (bedSize) {
+    case "one":
+      return location.rentOneBed;
+    case "two":
+      return location.rentTwoBed;
+    case "three":
+      return location.rentThreeBed;
+  }
+}
+
 export function compareLocations(
   from: Location,
-  to: Location
+  to: Location,
+  options: PersonalisationOptions = DEFAULT_OPTIONS
 ): ComparisonResult {
-  const taxFrom = calculateTax(from.medianSalary, from.country);
-  const taxTo = calculateTax(to.medianSalary, to.country);
+  const isPersonalised = options.customSalary !== undefined;
 
-  const salaryDiff = to.medianSalary - from.medianSalary;
+  // If personalised, use the same salary in both places (your salary follows you)
+  // The key insight: your earning power is roughly constant, but costs change
+  const salaryFrom = options.customSalary ?? from.medianSalary;
+  const salaryTo = options.customSalary ?? to.medianSalary;
+
+  const taxFrom = calculateTax(salaryFrom, from.country);
+  const taxTo = calculateTax(salaryTo, to.country);
+
+  const salaryDiff = salaryTo - salaryFrom;
   const takeHomeDiff = taxTo.takeHome - taxFrom.takeHome;
 
-  // Annual costs comparison (positive = saving money in target)
-  const rentDiff = (from.rentTwoBed - to.rentTwoBed) * 12;
+  // Rent based on selected bed size
+  const rentFrom = getRentForBedSize(from, options.bedSize);
+  const rentTo = getRentForBedSize(to, options.bedSize);
+  const rentDiff = (rentFrom - rentTo) * 12;
+
   const councilTaxDiff = from.councilTaxBandD - to.councilTaxBandD;
   const commuteDiff = (from.commuteMonthly - to.commuteMonthly) * 12;
-  const childcareDiff = (from.childcareMonthly - to.childcareMonthly) * 12;
-  const groceryDiff = (from.groceryBasketWeekly - to.groceryBasketWeekly) * 52;
+
+  // Childcare only included if toggled on
+  const childcareFrom = options.includeChildcare ? from.childcareMonthly : 0;
+  const childcareTo = options.includeChildcare ? to.childcareMonthly : 0;
+  const childcareDiff = (childcareFrom - childcareTo) * 12;
+
+  const groceryDiff =
+    (from.groceryBasketWeekly - to.groceryBasketWeekly) * 52;
   const energyDiff = (from.energyMonthly - to.energyMonthly) * 12;
 
   // Lifestyle costs (pint + cinema + gym monthly estimate)
@@ -143,31 +204,43 @@ export function compareLocations(
     rentDiff +
     councilTaxDiff +
     commuteDiff +
+    childcareDiff +
     groceryDiff +
     energyDiff +
     lifestyleDiff;
 
   // Monthly disposable (take-home minus essentials)
   const monthlyEssentialsFrom =
-    from.rentTwoBed +
+    rentFrom +
     from.councilTaxBandD / 12 +
     from.commuteMonthly +
     from.groceryBasketWeekly * 4.33 +
     from.energyMonthly +
-    from.broadbandMonthly;
+    from.broadbandMonthly +
+    childcareFrom;
 
   const monthlyEssentialsTo =
-    to.rentTwoBed +
+    rentTo +
     to.councilTaxBandD / 12 +
     to.commuteMonthly +
     to.groceryBasketWeekly * 4.33 +
     to.energyMonthly +
-    to.broadbandMonthly;
+    to.broadbandMonthly +
+    childcareTo;
 
-  const monthlyDisposableFrom = taxFrom.monthlyTakeHome - monthlyEssentialsFrom;
+  const monthlyDisposableFrom =
+    taxFrom.monthlyTakeHome - monthlyEssentialsFrom;
   const monthlyDisposableTo = taxTo.monthlyTakeHome - monthlyEssentialsTo;
 
-  // Verdict
+  // 5-year compounding: annual savings invested at modest growth
+  const annualDiffAbs = Math.abs(totalAnnualDiff);
+  const fiveYearDiff = Math.round(
+    Array.from({ length: 5 }).reduce<number>(
+      (acc) => (acc + annualDiffAbs) * 1.04,
+      0
+    )
+  );
+
   let verdict: Verdict;
   if (totalAnnualDiff > 500) {
     verdict = "greener";
@@ -180,6 +253,10 @@ export function compareLocations(
   return {
     from,
     to,
+    salaryFrom,
+    salaryTo,
+    takeHomeFrom: taxFrom,
+    takeHomeTo: taxTo,
     salaryDiff,
     takeHomeDiff,
     rentDiff,
@@ -193,7 +270,25 @@ export function compareLocations(
     monthlyDisposableFrom: Math.round(monthlyDisposableFrom),
     monthlyDisposableTo: Math.round(monthlyDisposableTo),
     verdict,
+    isPersonalised,
+    bedSize: options.bedSize,
+    includesChildcare: options.includeChildcare,
+    fiveYearDiff: totalAnnualDiff > 0 ? fiveYearDiff : -fiveYearDiff,
   };
+}
+
+// Quick comparison for ranking tables (explore page)
+export function quickCompare(
+  from: Location,
+  to: Location,
+  customSalary?: number
+): { annualDiff: number; verdict: Verdict } {
+  const result = compareLocations(from, to, {
+    customSalary,
+    bedSize: "two",
+    includeChildcare: false,
+  });
+  return { annualDiff: result.totalAnnualDiff, verdict: result.verdict };
 }
 
 export function formatCurrency(amount: number, showSign = false): string {

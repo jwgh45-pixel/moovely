@@ -26,16 +26,16 @@ export default function Header() {
             Compare
           </Link>
           <Link
+            href="/explore"
+            className="text-charcoal-muted hover:text-grass-dark transition-colors"
+          >
+            Explore
+          </Link>
+          <Link
             href="#how-it-works"
             className="text-charcoal-muted hover:text-grass-dark transition-colors"
           >
             How It Works
-          </Link>
-          <Link
-            href="#about"
-            className="text-charcoal-muted hover:text-grass-dark transition-colors"
-          >
-            About
           </Link>
         </nav>
       </div>

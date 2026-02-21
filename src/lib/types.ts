@@ -39,12 +39,29 @@ export type Region =
 
 export type Country = "England" | "Scotland" | "Wales" | "Northern Ireland";
 
+export type BedSize = "one" | "two" | "three";
+
+export interface PersonalisationOptions {
+  customSalary?: number; // if set, overrides median for both locations
+  bedSize: BedSize;
+  includeChildcare: boolean;
+}
+
+export const DEFAULT_OPTIONS: PersonalisationOptions = {
+  bedSize: "two",
+  includeChildcare: false,
+};
+
 export interface ComparisonResult {
   from: Location;
   to: Location;
+  salaryFrom: number; // actual salary used (custom or median)
+  salaryTo: number;
+  takeHomeFrom: TaxBreakdown;
+  takeHomeTo: TaxBreakdown;
   salaryDiff: number;
   takeHomeDiff: number;
-  rentDiff: number; // using 2-bed as default
+  rentDiff: number;
   councilTaxDiff: number;
   commuteDiff: number;
   childcareDiff: number;
@@ -55,6 +72,10 @@ export interface ComparisonResult {
   monthlyDisposableFrom: number;
   monthlyDisposableTo: number;
   verdict: Verdict;
+  isPersonalised: boolean;
+  bedSize: BedSize;
+  includesChildcare: boolean;
+  fiveYearDiff: number; // compounding difference over 5 years
 }
 
 export type Verdict = "greener" | "not-greener" | "about-the-same";
@@ -63,6 +84,8 @@ export interface TaxBreakdown {
   gross: number;
   incomeTax: number;
   nationalInsurance: number;
+  studentLoan: number;
   takeHome: number;
   monthlyTakeHome: number;
+  effectiveRate: number; // percentage of gross taken in tax+NI
 }
